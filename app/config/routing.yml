@@ -1,0 +1,5 @@
+vorterix_backend:
+    resource: "@VorterixBackendBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
