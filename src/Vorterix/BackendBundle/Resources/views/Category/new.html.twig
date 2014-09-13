@@ -1,0 +1,26 @@
+{% extends 'VorterixBackendBundle::layout.html.twig' %}
+{% block title %}Vorterix :: Posts{% endblock %}
+{% block section_title %}Vorterix :: Category{% endblock %}
+{% block content %}
+    <form name="post_creation" action="{{ url('VorterixBackendBundle_category_save') }}" method="post">
+    <div class="col-md-8">
+    <div class="box box-success">
+        <div class="box-header">
+            <h3 class="box-title">Different Height</h3>
+        </div>
+        <div class="box-body">
+            <input class="form-control input-lg" name="category_name" type="text" placeholder="Categoria">
+        </div>
+    </div>
+        
+    </div>
+    
+    <div class="col-md-4">
+        <div class="box-success box">
+            <div class="box-header">
+                <button class="btn btn-primary btn-lg">Guardar</button>
+            </div>
+        </div>
+    </div>
+    </form>
+{% endblock %}
