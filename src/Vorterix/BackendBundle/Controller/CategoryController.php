@@ -90,5 +90,10 @@ class CategoryController extends Controller
         
         return $categories;
     }
+    
+    public function listAction($id){
+        $categories = $this->getAllCategories();
+        return $this->render('VorterixBackendBundle:Category:category_list.html.twig', array('categories'=>$categories,'selected_id' => $id));
+    }
 
 }

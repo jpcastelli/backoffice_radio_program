@@ -26,9 +26,10 @@ class PostController extends Controller
     
     public function saveAction(Request $request){
         
+        //if post id exists is an update
         if($request->request->get('post_id')){
-            $id = $request->request->get('post_id');
-            $em = $this->getDoctrine()->getManager();
+            $id   = $request->request->get('post_id');
+            $em   = $this->getDoctrine()->getManager();
             $post = $em->getRepository('VorterixBackendBundle:Post')->find($id);
             
             if (!$post) {
@@ -36,20 +37,26 @@ class PostController extends Controller
                     'No product found for id '.$id
                 );
             }
-        }else{
+        }else{//New Element
             $em = $this->getDoctrine()->getEntityManager();
             $post = new \Vorterix\BackendBundle\Entity\Post();
         }
-            
-        $title = $request->request->get('post_title');
-        $pretitle = $request->request->get('post_pretitle');
+        
+        //Form Values
+        $title       = $request->request->get('post_title');
+        $pretitle    = $request->request->get('post_pretitle');
         $description = $request->request->get('post_description');
+        $category_id = $request->request->get('post_category');   
+
         
-        
+        $category = $em->getRepository('VorterixBackendBundle:Category')->find($category_id);
+
+        //Setting Values
         $post->setTitle($title);
         $post->setPretitle($pretitle);
         $post->setDescription($description);
         $post->setShortDescription("casasdasd");
+        $post->setCategory($category);
         $post->setStatus("false");
         $post->setCover("dasdas");
         $post->setMainVideo("dasda");
@@ -58,7 +65,7 @@ class PostController extends Controller
         
         $em->persist($post);
         $em->flush();
-        
+
         $posts = $this->getAllPosts();
         
         $content = $this->renderView(
@@ -74,7 +81,7 @@ class PostController extends Controller
         $post = $this->getDoctrine()
                      ->getRepository($this->repository)
                      ->findOneBy(array('id' => $id));
-        
+
         return $this->render('VorterixBackendBundle:Post:edit.html.twig', array('post' => $post));   
     }
     

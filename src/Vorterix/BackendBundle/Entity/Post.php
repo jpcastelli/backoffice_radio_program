@@ -64,6 +64,11 @@ class Post
     private $mainVideo;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Category")
+     */
+    private $category;
+    
+    /**
      * @var boolean
      *
      * @ORM\Column(name="status", type="boolean")
@@ -83,7 +88,6 @@ class Post
      * @ORM\Column(name="publishD", type="datetime")
      */
     private $publishD;
-
 
     /**
      * Get id
@@ -300,5 +304,29 @@ class Post
     public function getPublishD()
     {
         return $this->publishD;
+    }
+
+
+    /**
+     * Set category
+     *
+     * @param \Vorterix\BackendBundle\Entity\Category $category
+     * @return Post
+     */
+    public function setCategory(\Vorterix\BackendBundle\Entity\Category $category = null)
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * Get category
+     *
+     * @return \Vorterix\BackendBundle\Entity\Category 
+     */
+    public function getCategory()
+    {
+        return $this->category;
     }
 }

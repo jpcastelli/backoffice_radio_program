@@ -41,3 +41,7 @@ VorterixBackendBundle_category_edit:
 VorterixBackendBundle_category_delete:
     path:     backend/category/delete/{id}
     defaults: { _controller: VorterixBackendBundle:Category:delete, id : null }
+    
+VorterixBackendBundle_category_list:
+    path:     backend/category/list/{id}
+    defaults: { _controller: VorterixBackendBundle:Category:list, id : null }
