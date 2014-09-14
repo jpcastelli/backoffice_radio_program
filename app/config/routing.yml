@@ -1,5 +1,4 @@
 vorterix_backend:
-    resource: "@VorterixBackendBundle/Controller/"
-    type:     annotation
+    resource: "@VorterixBackendBundle/Resources/config/routing.yml"
     prefix:   /
 
