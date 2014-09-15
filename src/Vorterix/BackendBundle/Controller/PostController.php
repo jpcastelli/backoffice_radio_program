@@ -21,7 +21,8 @@ class PostController extends Controller
     
     public function newAction()
     {
-        return $this->render('VorterixBackendBundle:Post:new.html.twig', array());
+        $tags = $this->getAllTagsAction();
+        return $this->render('VorterixBackendBundle:Post:new.html.twig', array('tags' => $tags));
     }
     
     public function saveAction(Request $request){
@@ -46,11 +47,15 @@ class PostController extends Controller
         $title       = $request->request->get('post_title');
         $pretitle    = $request->request->get('post_pretitle');
         $description = $request->request->get('post_description');
-        $category_id = $request->request->get('post_category');   
+        $category_id = $request->request->get('post_category');  
+        $tags        = $request->request->get('tags');
 
-        
+        //Get Category entity object
         $category = $em->getRepository('VorterixBackendBundle:Category')->find($category_id);
-
+        
+        //Save tags array
+        $this->saveTags($tags);
+        
         //Setting Values
         $post->setTitle($title);
         $post->setPretitle($pretitle);
@@ -60,6 +65,11 @@ class PostController extends Controller
         $post->setStatus("false");
         $post->setCover("dasdas");
         $post->setMainVideo("dasda");
+        /** @todo Save Tag after editing. */
+        foreach($tags as $tagName){ 
+            $tag = $em->getRepository('VorterixBackendBundle:Tag')->findBy(array('name' => $tagName));
+            $post->addTag(current($tag));
+        }
         $post->setCreateD(new \DateTime("now"));
         $post->setPublishD(new \DateTime("now"));
         
@@ -81,8 +91,10 @@ class PostController extends Controller
         $post = $this->getDoctrine()
                      ->getRepository($this->repository)
                      ->findOneBy(array('id' => $id));
+        
+        $tags = $this->getAllTagsAction();
 
-        return $this->render('VorterixBackendBundle:Post:edit.html.twig', array('post' => $post));   
+        return $this->render('VorterixBackendBundle:Post:edit.html.twig', array('post' => $post, 'tags' => $tags));   
     }
     
     public function deleteAction($id){
@@ -109,6 +121,26 @@ class PostController extends Controller
                      ->findAll();
         
         return $posts;
+    }
+    
+    private function saveTags($tags){
+        $em = $this->getDoctrine()->getEntityManager();
+        
+        foreach($tags as $tagName){
+            if(!$em->getRepository('VorterixBackendBundle:Tag')->findBy(array('name' => $tagName))){
+                $tagsObj = new \Vorterix\BackendBundle\Entity\Tag();
+
+                $tagsObj->setName($tagName);
+                $em->persist($tagsObj);
+                $em->flush();
+            }
+        }
+    }
+    
+    public function getAllTagsAction(){
+        $em = $this->getDoctrine()->getEntityManager();
+        $tags = $em->getRepository('VorterixBackendBundle:Tag')->findAll();
+        return $tags;
     }
 
 }

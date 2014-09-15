@@ -69,6 +69,12 @@ class Post
     private $category;
     
     /**
+     * @ORM\ManyToMany(targetEntity="Tag")
+     * @ORM\JoinTable(name="posts_tags")
+     */
+    private $tags;
+    
+    /**
      * @var boolean
      *
      * @ORM\Column(name="status", type="boolean")
@@ -328,5 +334,45 @@ class Post
     public function getCategory()
     {
         return $this->category;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->tags = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add tags
+     *
+     * @param \Vorterix\BackendBundle\Entity\Tag $tags
+     * @return Post
+     */
+    public function addTag(\Vorterix\BackendBundle\Entity\Tag $tags)
+    {
+        $this->tags[] = $tags;
+
+        return $this;
+    }
+
+    /**
+     * Remove tags
+     *
+     * @param \Vorterix\BackendBundle\Entity\Tag $tags
+     */
+    public function removeTag(\Vorterix\BackendBundle\Entity\Tag $tags)
+    {
+        $this->tags->removeElement($tags);
+    }
+
+    /**
+     * Get tags
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTags()
+    {
+        return $this->tags;
     }
 }
