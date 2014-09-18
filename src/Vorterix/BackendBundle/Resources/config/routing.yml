@@ -45,3 +45,13 @@ VorterixBackendBundle_category_delete:
 VorterixBackendBundle_category_list:
     path:     backend/category/list/{id}
     defaults: { _controller: VorterixBackendBundle:Category:list, id : null }
+    
+login:
+    path:    backend/login
+    defaults: { _controller: VorterixBackendBundle:Security:login }
+    
+login_check:
+    path:    backend/login_check
+    
+VorterixBackendBundle_logout:
+    path:   /backend/logout
