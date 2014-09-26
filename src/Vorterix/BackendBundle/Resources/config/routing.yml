@@ -3,7 +3,7 @@ admin:
     defaults: { _controller: VorterixBackendBundle:Default:index }
 
 VorterixBackendBundle_post:
-    path:     backend/post
+    path:     backend/post/
     defaults: { _controller: VorterixBackendBundle:Post:index }
 
 VorterixBackendBundle_post_new:
@@ -55,3 +55,12 @@ login_check:
     
 VorterixBackendBundle_logout:
     path:   /backend/logout
+    
+VorterixBackendBundle_ajupload:
+    pattern:  backend/ajupload
+    defaults: { _controller: VorterixBackendBundle:Uploader:ajUpload }
+
+VorterixBackendBundle_getFiles:
+    pattern:  backend/getFiles
+    defaults: { _controller: VorterixBackendBundle:Post:files }    
+

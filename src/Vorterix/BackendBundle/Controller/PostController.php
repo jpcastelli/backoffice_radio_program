@@ -3,10 +3,9 @@
 namespace Vorterix\BackendBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Gaufrette\Adapter\Ftp as FtpAdapter;
 
 class PostController extends Controller
 {
@@ -124,7 +123,7 @@ class PostController extends Controller
     }
     
     private function saveTags($tags){
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         
         foreach($tags as $tagName){
             if(!$em->getRepository('VorterixBackendBundle:Tag')->findBy(array('name' => $tagName))){
@@ -138,9 +137,9 @@ class PostController extends Controller
     }
     
     public function getAllTagsAction(){
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $tags = $em->getRepository('VorterixBackendBundle:Tag')->findAll();
         return $tags;
     }
-
+    
 }
