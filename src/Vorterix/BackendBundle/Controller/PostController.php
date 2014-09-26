@@ -142,4 +142,39 @@ class PostController extends Controller
         return $tags;
     }
     
+    /*
+    public function filesAction(Request $request){
+        $dir = $request->request->get('dir');
+
+        $host ="us.upload.octoshape.com";
+        $username = "sion-vorterix2015";
+        $password = "ggAhGyJD";
+        
+        $ftp = new FtpAdapter($dir, $host, array("username" => $username, "password" => $password));
+        $files = $ftp->listDirectory('/');
+
+           
+           
+            $dir = $ftp->listDirectory('/'); 
+            $tree = '<ul class="jqueryFileTree" style="display: none;">';
+            foreach($dir['dirs'] as $directory){
+                $isDir = $ftp->isDirectory($directory);
+                if($isDir){
+                    $tree .= '<li class="directory collapsed"><a href="#" rel="/'.$directory.'">'.$directory.'</a>';
+                    $files = $ftp->listDirectory($directory);
+                    $tree .= '<ul class="jqueryFileTree" style="display: none;">';
+                    foreach($files['keys'] as $file){
+                        $tree .= '<li class="file ext_txt"><a href="#" rel="ftp://us.upload.octoshape.com/'.$directory.'/'.$file.'">'.$file.'</a></li>';
+                    }
+                    $tree .= '</ul>';
+                    $tree .= '</li>';
+                    
+                }
+            }
+            $tree .= '</ul>';
+            
+
+            return new Response( json_encode( array('result' => $tree)) );
+        }*/
+    
 }
