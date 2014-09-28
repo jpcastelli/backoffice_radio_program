@@ -1,0 +1,67 @@
+{% extends 'VorterixBackendBundle::layout.html.twig' %}
+{% block title %}Vorterix :: Gallery{% endblock %}
+{% block section_title %}Vorterix :: Gallery{% endblock %}
+{% block stylesheets %}
+    {{parent()}}
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/uploadify/uploadify.css') }}" type="text/css" />
+{% endblock %}
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/uploadify/jquery.uploadify.min.js') }}"></script> 
+    <script type="text/javascript">
+        $(function(){
+             $('#file_upload').uploadify({
+                    'auto'        : false,
+                    'swf'         : '{{ asset('bundles/vorterixbackend/swf/uploadify.swf') }}',
+                    'uploader'    : '{{ url('VorterixBackendBundle_ajupload') }}',
+                    'fileObjName' : 'the_file',
+                    'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
+                    'multi'       : true,
+                    'buttonText' : 'Browse',
+                    'onUploadSuccess' : function(response) {
+                        console.log(response);
+                        $("#show-images").append('<input type="hidden" name="images[]" value="{{ asset('uploads/') }}' + response.name +'" /><img src="{{ asset('uploads/') }}' + response.name +'" width="100"  height="100"/>');
+                    },
+                    'debug'       : true,
+                    'formData' : { 'galleryName' : $('#gallery-name').val() }
+                    // Put your options here
+                  });
+                  
+                  $("#uploadImgs").click(function (e) { e.preventDefault(); 
+                        $('#file_upload').uploadifyUpload();
+                    });
+        });
+    </script>
+{% endblock %}
+{% block content %}
+    <form name="post_creation" action="{{ url('VorterixBackendBundle_gallery_save') }}" method="post">
+    <input type="hidden" name="gallery_id" value="{{ gallery.id }}" />
+    <div class="col-md-8">
+    <div class="box box-success">
+        <div class="box-header">
+            <h3 class="box-title">Galeria</h3>
+        </div>
+        <div class="box-body">
+            <input type="text" name="gallery-name" id="gallery-name" class="form-control input-lg" placeholder="Nombre Galeria" value="{{ gallery.name }}" />
+            <br />
+            <div id="queue"></div>
+            <input id="file_upload" name="file_upload" type="file" multiple="true">
+            <a href="javascript:$('#file_upload').uploadify('upload','*')">Upload Files</a>
+            <div id="show-images"></div>
+            {% for image in images %}
+                <img src="/uploads/{{ image.name }}" width="100" />
+            {% endfor %}
+        </div>
+    </div>
+        
+    </div>
+    
+    <div class="col-md-4">
+        <div class="box-success box">
+            <div class="box-header">
+                <button class="btn btn-primary btn-lg">Guardar</button>
+            </div>
+        </div>
+    </div>
+    </form>
+{% endblock %}

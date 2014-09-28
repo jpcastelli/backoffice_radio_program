@@ -1,0 +1,57 @@
+{% extends 'VorterixBackendBundle::layout.html.twig' %}
+{% block title %}Vorterix :: Galerias{% endblock %}
+{% block section_title %}Vorterix :: Galerias{% endblock %}
+{% block content %}
+    
+{% if success_gallery is defined and success_gallery %}
+<div class="alert alert-success alert-dismissable">
+    <i class="fa fa-check"></i>
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <b>Perfecto!</b> Tu nueva galeria se creo exitosamente.
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Listado de Galerias</h3>
+                <div class="box-tools">
+                    <div class="input-group">
+                        <input type="text" name="table_search" class="form-control input-sm pull-right" style="width: 150px;" placeholder="Search"/>
+                        <div class="input-group-btn">
+                            <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-hover">
+                    <tr>
+                        <th>ID</th>
+                        <th>Galeria</th>
+                    </tr>
+                    {% for gallery in galleries %}
+                    <tr>
+                        <td>{{ gallery.id }}</td>
+                        <td>{{ gallery.name }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default">Action</button>
+                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ url('VorterixBackendBundle_gallery_edit') }}/{{ gallery.id }}">Editar</a></li>
+                                    <li><a href="{{ url('VorterixBackendBundle_gallery_delete') }}/{{ gallery.id }}">Eliminar</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div><!-- /.box-body -->
+        </div><!-- /.box -->
+    </div>
+{% endblock %}
