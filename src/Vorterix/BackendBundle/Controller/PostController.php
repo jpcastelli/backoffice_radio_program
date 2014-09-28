@@ -31,6 +31,7 @@ class PostController extends Controller
             $id   = $request->request->get('post_id');
             $em   = $this->getDoctrine()->getManager();
             $post = $em->getRepository('VorterixBackendBundle:Post')->find($id);
+            $postTags = $post->getTags();
             
             if (!$post) {
                 throw $this->createNotFoundException(
@@ -64,11 +65,28 @@ class PostController extends Controller
         $post->setStatus("false");
         $post->setCover("dasdas");
         $post->setMainVideo("dasda");
-        /** @todo Save Tag after editing. */
-        foreach($tags as $tagName){ 
-            $tag = $em->getRepository('VorterixBackendBundle:Tag')->findBy(array('name' => $tagName));
-            $post->addTag(current($tag));
+        
+        /** @todo Improve saving tags after editing. */
+        if(isset($postTags) && !empty($postTags)){//PostTags will be set if in edit mode.
+            $postTagsArray = array();
+            foreach($postTags as $tag){
+                 $postTagsArray[] = $tag->getName();
+            }
         }
+        
+        if(!empty($tags)){
+            foreach($tags as $tagName){ 
+                    $tag = $em->getRepository('VorterixBackendBundle:Tag')->findBy(array('name' => $tagName));
+                    if(isset($postTagsArray)){//edit mode.
+                        if(!in_array($tagName, $postTagsArray)){
+                            $post->addTag(current($tag));
+                        }
+                    }else{
+                        $post->addTag(current($tag));
+                    }
+            }
+        }
+        
         $post->setCreateD(new \DateTime("now"));
         $post->setPublishD(new \DateTime("now"));
         
@@ -123,15 +141,17 @@ class PostController extends Controller
     }
     
     private function saveTags($tags){
-        $em = $this->getDoctrine()->getManager();
-        
-        foreach($tags as $tagName){
-            if(!$em->getRepository('VorterixBackendBundle:Tag')->findBy(array('name' => $tagName))){
-                $tagsObj = new \Vorterix\BackendBundle\Entity\Tag();
+        if(!empty($tags)){
+            $em = $this->getDoctrine()->getManager();
 
-                $tagsObj->setName($tagName);
-                $em->persist($tagsObj);
-                $em->flush();
+            foreach($tags as $tagName){
+                if(!$em->getRepository('VorterixBackendBundle:Tag')->findBy(array('name' => $tagName))){
+                    $tagsObj = new \Vorterix\BackendBundle\Entity\Tag();
+
+                    $tagsObj->setName($tagName);
+                    $em->persist($tagsObj);
+                    $em->flush();
+                }
             }
         }
     }
