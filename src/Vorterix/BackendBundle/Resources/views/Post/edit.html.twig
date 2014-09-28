@@ -28,47 +28,70 @@
     <form name="post_creation" action="{{ url('VorterixBackendBundle_post_save') }}" method="post">
         <input type="hidden" name="post_id" value="{{ post.id }}" />
         <div class="col-md-8">
-        <div class="box box-success">
-            <div class="box-header">
-                <h3 class="box-title">Different Height</h3>
+            <div class="box box-success">
+                <div class="box-header">
+                    <h3 class="box-title">Titulos</h3>
+                </div>
+                <div class="box-body">
+                    <input class="form-control input-lg" name="post_pretitle" type="text" placeholder="Pre Titulo" value="{{ post.pretitle }}">
+                    <br />
+                    <input class="form-control input-lg" name="post_title" type="text" placeholder="Titulo" value="{{ post.title }}">
+                </div>
             </div>
-            <div class="box-body">
-                <input class="form-control input-lg" name="post_pretitle" type="text" placeholder="Pre Titulo" value="{{ post.pretitle }}">
-                <br />
-                <input class="form-control input-lg" name="post_title" type="text" placeholder="Titulo" value="{{ post.title }}">
+                
+            <div class='row'>
+                <div class='col-md-12'>
+                    <div class='box box-warning'>
+                        <div class='box-header'>
+                            <h3 class='box-title'>Galeria de Imagenes</h3>
+                            <!-- tools box -->
+                            <div class="pull-right box-tools">
+                                <button class="btn btn-info btn-sm" data-widget='collapse' data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
+                                <button class="btn btn-info btn-sm" data-widget='remove' data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
+                            </div><!-- /. tools -->
+                        </div><!-- /.box-header -->
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label>Elige las galer&iacute;as que quieras adjuntar al post (Ctrl para seleccionar varias)</label>
+                                <select multiple="" name="post_galleries[]" class="form-control">
+                                    {% for gallery in galleries %}
+                                        {% for postGallery in post.galleries %}
+                                            <option {% if gallery.id == postGallery.id %}selected{% endif %} value="{{ gallery.id }}">{{ gallery.name }}</option>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class='row'>
-            <div class='col-md-12'>
-                <div class='box box-info'>
-                    <div class='box-header'>
-                        <h3 class='box-title'>Descripcion</h3>
-                        <!-- tools box -->
-                        <div class="pull-right box-tools">
-                            <button class="btn btn-info btn-sm" data-widget='collapse' data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
-                            <button class="btn btn-info btn-sm" data-widget='remove' data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
-                        </div><!-- /. tools -->
-                    </div><!-- /.box-header -->
-                    <div class='box-body pad'>
-                            <textarea id="editor1" name="post_description" rows="10" cols="80">{{ post.description }}
-                            </textarea>
+            <div class='row'>
+                <div class='col-md-12'>
+                    <div class='box box-info'>
+                        <div class='box-header'>
+                            <h3 class='box-title'>Descripcion</h3>
+                            <!-- tools box -->
+                            <div class="pull-right box-tools">
+                                <button class="btn btn-info btn-sm" data-widget='collapse' data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
+                                <button class="btn btn-info btn-sm" data-widget='remove' data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
+                            </div><!-- /. tools -->
+                        </div><!-- /.box-header -->
+                        <div class='box-body pad'>
+                                <textarea id="editor1" name="post_description" rows="10" cols="80">{{ post.description }}
+                                </textarea>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        </div>
 
         <div class="col-md-4">
             <div class="box-success box">
-                <div class="box-header">
-                    <button class="btn btn-primary btn-lg">Guardar</button>
-
-                </div>
+                <div class="box-header"></div>
                 <div class="box-body">
 
                     <div class="form-group">
-                        <label>Programa</label>
                         {% if post.category %}
                             {% render url('VorterixBackendBundle_category_list', {'id': post.category.id }) %}
                         {% else %}
@@ -76,16 +99,21 @@
                         {% endif %}
                     </div>
                     <div class="form-group">
+                        <label>Etiquetas (XXXX + Enter)</label>
                         <ul id="myTags">
                             {% for tag in post.tags %}
                             <li>{{ tag.name }}</li>
                             {% endfor %}
                         </ul>
                     </div>
+                </div>
+            </div>
+            <div class="box-success box">
+                <div class="box-header">  
+                </div>
+                <div class="box-body">
                     <div class="form-group">
-                        <label for="exampleInputFile">Cover</label>
-                        <input type="file" id="exampleInputFile">
-                        <p class="help-block">Example block-level help text here.</p>
+                        <button class="btn btn-success btn-lg">Guardar Post</button>
                     </div>
                 </div>
             </div>

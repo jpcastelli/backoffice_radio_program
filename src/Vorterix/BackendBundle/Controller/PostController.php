@@ -21,7 +21,8 @@ class PostController extends Controller
     public function newAction()
     {
         $tags = $this->getAllTagsAction();
-        return $this->render('VorterixBackendBundle:Post:new.html.twig', array('tags' => $tags));
+        $galleries = $this->getAllGalleries();
+        return $this->render('VorterixBackendBundle:Post:new.html.twig', array('tags' => $tags, 'galleries' => $galleries));
     }
     
     public function saveAction(Request $request){
@@ -39,7 +40,7 @@ class PostController extends Controller
                 );
             }
         }else{//New Element
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $post = new \Vorterix\BackendBundle\Entity\Post();
         }
         
@@ -49,6 +50,7 @@ class PostController extends Controller
         $description = $request->request->get('post_description');
         $category_id = $request->request->get('post_category');  
         $tags        = $request->request->get('tags');
+        $galleries   = $request->request->get('post_galleries');
 
         //Get Category entity object
         $category = $em->getRepository('VorterixBackendBundle:Category')->find($category_id);
@@ -62,9 +64,12 @@ class PostController extends Controller
         $post->setDescription($description);
         $post->setShortDescription("casasdasd");
         $post->setCategory($category);
+        $this->setPostGalleries($post, $galleries);
         $post->setStatus("false");
         $post->setCover("dasdas");
         $post->setMainVideo("dasda");
+        $post->setCreateD(new \DateTime("now"));
+        $post->setPublishD(new \DateTime("now"));
         
         /** @todo Improve saving tags after editing. */
         if(isset($postTags) && !empty($postTags)){//PostTags will be set if in edit mode.
@@ -87,9 +92,6 @@ class PostController extends Controller
             }
         }
         
-        $post->setCreateD(new \DateTime("now"));
-        $post->setPublishD(new \DateTime("now"));
-        
         $em->persist($post);
         $em->flush();
 
@@ -108,10 +110,11 @@ class PostController extends Controller
         $post = $this->getDoctrine()
                      ->getRepository($this->repository)
                      ->findOneBy(array('id' => $id));
-        
+  
         $tags = $this->getAllTagsAction();
-
-        return $this->render('VorterixBackendBundle:Post:edit.html.twig', array('post' => $post, 'tags' => $tags));   
+        $galleries = $this->getAllGalleries();
+        
+        return $this->render('VorterixBackendBundle:Post:edit.html.twig', array('post' => $post, 'tags' => $tags, 'galleries' => $galleries));   
     }
     
     public function deleteAction($id){
@@ -160,6 +163,32 @@ class PostController extends Controller
         $em = $this->getDoctrine()->getManager();
         $tags = $em->getRepository('VorterixBackendBundle:Tag')->findAll();
         return $tags;
+    }
+    
+    private function getAllGalleries(){
+        $em = $this->getDoctrine()->getManager();
+        $galleries = $em->getRepository('VorterixBackendBundle:Gallery')->findAll();
+        return $galleries;
+    }
+    
+    private function setPostGalleries($post, $galleries){
+        if(count($galleries) > 0){
+            foreach($galleries as $gallery){
+                $em = $this->getDoctrine()->getManager();
+                $gallery = $em->getRepository('VorterixBackendBundle:Gallery')->find($gallery);
+                $postGalleriesArr = array();
+                $postGalleries = $post->getGalleries();
+                if(count($postGalleries) > 0){
+                    foreach ($post->getGalleries() as $postGallery){
+                        $postGalleriesArr[] = $postGallery;
+                    }
+
+                    if(!in_array($gallery, $postGalleriesArr)){
+                        $post->addGallery($gallery);
+                    }
+                }
+            }
+        }
     }
     
     /*

@@ -75,6 +75,12 @@ class Post
     private $tags;
     
     /**
+     * @ORM\ManyToMany(targetEntity="Gallery")
+     * @ORM\JoinTable(name="posts_galleries")
+     */
+    private $galleries;
+    
+    /**
      * @var boolean
      *
      * @ORM\Column(name="status", type="boolean")
@@ -341,6 +347,7 @@ class Post
     public function __construct()
     {
         $this->tags = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->galleries = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -374,5 +381,38 @@ class Post
     public function getTags()
     {
         return $this->tags;
+    }
+
+    /**
+     * Add galleries
+     *
+     * @param \Vorterix\BackendBundle\Entity\Gallery $galleries
+     * @return Post
+     */
+    public function addGallery(\Vorterix\BackendBundle\Entity\Gallery $galleries)
+    {
+        $this->galleries[] = $galleries;
+
+        return $this;
+    }
+
+    /**
+     * Remove galleries
+     *
+     * @param \Vorterix\BackendBundle\Entity\Gallery $galleries
+     */
+    public function removeGallery(\Vorterix\BackendBundle\Entity\Gallery $galleries)
+    {
+        $this->galleries->removeElement($galleries);
+    }
+
+    /**
+     * Get galleries
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGalleries()
+    {
+        return $this->galleries;
     }
 }
