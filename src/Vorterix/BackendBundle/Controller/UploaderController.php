@@ -13,19 +13,28 @@ class UploaderController extends Controller
      * This method upload a file coming from upload request
      */
 
-    public function ajUploadAction(Request $request)
-    { //echo $this->container->get('kernel')->getRootDir(); exit;
-        //fix uploadify by using token auth
-       
-        
-        //name based on uniqid if not provided as parameter
-        $galleryName = $request->request->get('galleryName');
+    public function ajUploadAction(Request $request){
         $uploadedFile = $request->files->get('the_file');
+        $type = $request->request->get('type');
+ 
+        $path = $this->getUploadsDir();
+        
+        switch($type){
+            case 'post': 
+                $path = $this->getUploadsDir().'posts/cover/';
+                break;
+            case 'gallery': 
+                $path = $this->getUploadsDir().'galleries/';
+                break;
+        }
         //$fileExtension = strtolower($uploadedFile->guessExtension());
         $filename = $uploadedFile->getClientOriginalName();
-        $destinationFolder = $this->container->get('kernel')->getRootDir()."/../web/uploads";
+        $destinationFolder = $path;
         $uploadedFile->move($destinationFolder, $filename);
         return new Response($filename,200);
     }
     
+    private function getUploadsDir(){
+        return __DIR__.'/../../../../web/uploads/';
+    }
 }
