@@ -68,7 +68,7 @@ class PostController extends Controller
         $post->setShortDescription($shortDescription);
         $post->setCategory($category);
         $this->setPostGalleries($post, $galleries);
-        $post->setStatus("false");
+        $post->setStatus(true);
         $post->setCover($cover);
         $post->setMainVideo("dasda");
         $post->setComments($comments);
