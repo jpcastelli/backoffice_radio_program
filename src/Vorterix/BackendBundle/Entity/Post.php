@@ -88,6 +88,13 @@ class Post
     private $status;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="comments", type="boolean")
+     */
+    private $comments;
+    
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="createD", type="datetime")
@@ -414,5 +421,28 @@ class Post
     public function getGalleries()
     {
         return $this->galleries;
+    }
+
+    /**
+     * Set comments
+     *
+     * @param boolean $comments
+     * @return Post
+     */
+    public function setComments($comments)
+    {
+        $this->comments = $comments;
+
+        return $this;
+    }
+
+    /**
+     * Get comments
+     *
+     * @return boolean 
+     */
+    public function getComments()
+    {
+        return $this->comments;
     }
 }

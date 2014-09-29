@@ -53,6 +53,7 @@ class PostController extends Controller
         $tags        = $request->request->get('tags');
         $galleries   = $request->request->get('post_galleries');
         $cover       = $request->request->get('post_cover');
+        $comments    = ($request->request->get('post_comments') == 'on') ? true : false;
 
         //Get Category entity object
         $category = $em->getRepository('VorterixBackendBundle:Category')->find($category_id);
@@ -70,6 +71,7 @@ class PostController extends Controller
         $post->setStatus("false");
         $post->setCover($cover);
         $post->setMainVideo("dasda");
+        $post->setComments($comments);
         $post->setCreateD(new \DateTime("now"));
         $post->setPublishD(new \DateTime("now"));
         
