@@ -81,9 +81,7 @@
                                 <label>Elige las galer&iacute;as que quieras adjuntar al post (Ctrl para seleccionar varias)</label>
                                 <select multiple="" name="post_galleries[]" class="form-control">
                                     {% for gallery in galleries %}
-                                        {% for postGallery in post.galleries %}
-                                            <option {% if gallery.id == postGallery.id %}selected{% endif %} value="{{ gallery.id }}">{{ gallery.name }}</option>
-                                        {% endfor %}
+                                            <option {% for postGallery in post.galleries %}{% if gallery.id == postGallery.id %}selected{% endif %}{% endfor %} value="{{ gallery.id }}">{{ gallery.name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
