@@ -47,6 +47,7 @@ class PostController extends Controller
         //Form Values
         $title       = $request->request->get('post_title');
         $pretitle    = $request->request->get('post_pretitle');
+        $shortDescription = $request->request->get('post_short_description');
         $description = $request->request->get('post_description');
         $category_id = $request->request->get('post_category');  
         $tags        = $request->request->get('tags');
@@ -63,7 +64,7 @@ class PostController extends Controller
         $post->setTitle($title);
         $post->setPretitle($pretitle);
         $post->setDescription($description);
-        $post->setShortDescription("casasdasd");
+        $post->setShortDescription($shortDescription);
         $post->setCategory($category);
         $this->setPostGalleries($post, $galleries);
         $post->setStatus("false");
