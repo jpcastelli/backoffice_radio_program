@@ -19,12 +19,10 @@
                     'multi'       : true,
                     'buttonText' : 'Browse',
                     'onUploadSuccess' : function(response) {
-                        console.log(response);
-                        $("#show-images").append('<input type="hidden" name="images[]" value="{{ asset('uploads/') }}' + response.name +'" /><img src="{{ asset('uploads/') }}' + response.name +'" width="100"  height="100"/>');
+                        $("#show-images").append('<input type="hidden" name="images[]" value="' + response.name +'" /><img src="{{ asset('uploads/galleries/') }}' + response.name +'" width="100"  height="100"/>');
                     },
-                    'debug'       : true,
-                    'formData' : { 'galleryName' : $('#gallery-name').val() }
-                    // Put your options here
+                    'debug'       : false,
+                    'formData' : { 'type' : 'gallery' }
                   });
                   
                   $("#uploadImgs").click(function (e) { e.preventDefault(); 
