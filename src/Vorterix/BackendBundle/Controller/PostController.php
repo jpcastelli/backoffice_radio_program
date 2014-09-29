@@ -176,21 +176,19 @@ class PostController extends Controller
     }
     
     private function setPostGalleries($post, $galleries){
+        
+        $postGalleries = $post->getGalleries();
+        if(count($postGalleries) > 0){
+            foreach ($post->getGalleries() as $postGallery){
+                $post->removeGallery($postGallery);
+            }
+        }
+        
         if(count($galleries) > 0){
-            foreach($galleries as $gallery){
+            foreach($galleries as $gallery){ 
                 $em = $this->getDoctrine()->getManager();
                 $gallery = $em->getRepository('VorterixBackendBundle:Gallery')->find($gallery);
-                $postGalleriesArr = array();
-                $postGalleries = $post->getGalleries();
-                if(count($postGalleries) > 0){
-                    foreach ($post->getGalleries() as $postGallery){
-                        $postGalleriesArr[] = $postGallery;
-                    }
-
-                    if(!in_array($gallery, $postGalleriesArr)){
-                        $post->addGallery($gallery);
-                    }
-                }
+                $post->addGallery($gallery);
             }
         }
     }
