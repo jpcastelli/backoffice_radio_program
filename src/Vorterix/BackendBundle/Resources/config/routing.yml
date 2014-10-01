@@ -57,10 +57,29 @@ VorterixBackendBundle_logout:
     path:   /backend/logout
     
 VorterixBackendBundle_ajupload:
-    pattern:  backend/ajupload
+    pattern:  /backend/ajupload
     defaults: { _controller: VorterixBackendBundle:Uploader:ajUpload }
 
-VorterixBackendBundle_getFiles:
-    pattern:  backend/getFiles
-    defaults: { _controller: VorterixBackendBundle:Post:files }    
+VorterixBackendBundle_FileTree:
+    pattern:  /backend/fileTree
+    defaults: { _controller: VorterixBackendBundle:Uploader:fileTree }
+    
+VorterixBackendBundle_gallery:
+    pattern:  /backend/gallery
+    defaults: { _controller: VorterixBackendBundle:Gallery:index }
 
+VorterixBackendBundle_gallery_new:
+    pattern:  /backend/gallery/new
+    defaults: { _controller: VorterixBackendBundle:Gallery:new }
+    
+VorterixBackendBundle_gallery_save:
+    pattern:  /backend/gallery/save
+    defaults: { _controller: VorterixBackendBundle:Gallery:save }
+    
+VorterixBackendBundle_gallery_edit:
+    pattern:  /backend/gallery/edit/{id}
+    defaults: { _controller: VorterixBackendBundle:Gallery:edit, id: null }
+    
+VorterixBackendBundle_gallery_delete:
+    pattern:  /backend/gallery/delete/{id}
+    defaults: { _controller: VorterixBackendBundle:Gallery:delete, id: null }

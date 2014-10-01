@@ -5,7 +5,6 @@ namespace Vorterix\BackendBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Gaufrette\Adapter\Ftp as FtpAdapter;
 
 class PostController extends Controller
 {
@@ -53,6 +52,7 @@ class PostController extends Controller
         $tags        = $request->request->get('tags');
         $galleries   = $request->request->get('post_galleries');
         $cover       = $request->request->get('post_cover');
+        $video       = $request->request->get('post_video');
         $comments    = ($request->request->get('post_comments') == 'on') ? true : false;
 
         //Get Category entity object
@@ -70,7 +70,7 @@ class PostController extends Controller
         $this->setPostGalleries($post, $galleries);
         $post->setStatus(true);
         $post->setCover($cover);
-        $post->setMainVideo("dasda");
+        $post->setMainVideo($video);
         $post->setComments($comments);
         $post->setCreateD(new \DateTime("now"));
         $post->setPublishD(new \DateTime("now"));
@@ -192,40 +192,4 @@ class PostController extends Controller
             }
         }
     }
-    
-    /*
-    public function filesAction(Request $request){
-        $dir = $request->request->get('dir');
-
-        $host ="us.upload.octoshape.com";
-        $username = "sion-vorterix2015";
-        $password = "ggAhGyJD";
-        
-        $ftp = new FtpAdapter($dir, $host, array("username" => $username, "password" => $password));
-        $files = $ftp->listDirectory('/');
-
-           
-           
-            $dir = $ftp->listDirectory('/'); 
-            $tree = '<ul class="jqueryFileTree" style="display: none;">';
-            foreach($dir['dirs'] as $directory){
-                $isDir = $ftp->isDirectory($directory);
-                if($isDir){
-                    $tree .= '<li class="directory collapsed"><a href="#" rel="/'.$directory.'">'.$directory.'</a>';
-                    $files = $ftp->listDirectory($directory);
-                    $tree .= '<ul class="jqueryFileTree" style="display: none;">';
-                    foreach($files['keys'] as $file){
-                        $tree .= '<li class="file ext_txt"><a href="#" rel="ftp://us.upload.octoshape.com/'.$directory.'/'.$file.'">'.$file.'</a></li>';
-                    }
-                    $tree .= '</ul>';
-                    $tree .= '</li>';
-                    
-                }
-            }
-            $tree .= '</ul>';
-            
-
-            return new Response( json_encode( array('result' => $tree)) );
-        }*/
-    
 }

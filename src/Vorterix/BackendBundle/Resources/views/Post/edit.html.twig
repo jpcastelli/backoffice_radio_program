@@ -4,6 +4,7 @@
     <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css">
     <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/jquery.tagit.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/uploadify/uploadify.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/jquery-filetree/jqueryFileTree.css') }}" type="text/css" />
 {% endblock %}
 {% block javascripts %}
     {{parent()}}
@@ -11,6 +12,8 @@
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/uploadify/jquery.uploadify.min.js') }}"></script> 
     <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/tag-it.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/jquery-filetree/jquery.easing.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/jquery-filetree/jqueryFileTree.js') }}"></script> 
     <script type="text/javascript">
         $(function() {
                 // Replace the <textarea id="editor1"> with a CKEditor
@@ -40,10 +43,11 @@
                 $("#uploadImgs").click(function (e) { e.preventDefault(); 
                     $('#file_upload').uploadifyUpload();
                 });
-/*
-                $('#fileTreeDemo_1').fileTree({ root: '/', script: '{{ path('VorterixBackendBundle_getFiles') }}' }, function(file) { 
-                        $(this).html(file.result);
-                });*/
+                
+                $('#file_tree').fileTree({ root: '/', script:'{{ url('VorterixBackendBundle_FileTree') }}' }, function(file) { 
+                    $('#post_video').val(file)
+                });
+  
             });  
     </script>
 
@@ -150,6 +154,7 @@
                 <div class="box-header"></div>
                 <div class="box-body">
                     <div class="form-group"> 
+                        <label>Cover</label>
                         <div id="queue"></div>
                         <input id="file_upload" name="file_upload" type="file" multiple="false">
                         <a href="javascript:$('#file_upload').uploadify('upload','*')">Subir Archivos</a>
@@ -158,10 +163,21 @@
                         <input type="hidden" name="post_cover" id="post_cover" value="{{ post.cover }}" />
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-success btn-lg">Guardar Post</button>
+                        <label>Elija la ubicacion del video a usar como cover</label>
+                        <div id="file_tree" class="vtx_tree"></div>
+                        <br />
+                        <input type="text" class="form-control" placeholder="Post video" readOnly id="post_video" name="post_video" value="{{post.mainVideo}}">
                     </div>
                 </div>
             </div>
+            <div class="box-success box">
+                <div class="box-header"></div>
+                <div class="box-body">
+                    <div class="form-group">
+                        <button class="btn btn-success btn-lg">Guardar Post</button>
+                    </div>
+                </div>
+            </div> 
         </div>
     </form>
 {% endblock %}
