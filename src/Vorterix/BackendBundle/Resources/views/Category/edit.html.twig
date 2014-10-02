@@ -1,5 +1,5 @@
 {% extends 'VorterixBackendBundle::layout.html.twig' %}
-{% block title %}Vorterix :: Posts{% endblock %}
+{% block title %}Vorterix :: Category{% endblock %}
 {% block section_title %}Vorterix :: Category{% endblock %}
 {% block stylesheets %}
     {{parent()}}
@@ -54,8 +54,11 @@
                     <input id="file_upload" name="file_upload" type="file" multiple="false">
                     <a href="javascript:$('#file_upload').uploadify('upload','*')">Subir Archivos</a>
                     <div id="show-images"></div>
+                    {% if category.cover %}
                     <img src="/uploads/categories/cover/{{ category.cover }}" width="100" />
                     <input type="hidden" name="category_cover" value="{{ category.cover }}" />
+                    {% endif %}
+                    
                 </div>
             </div>
         </div>
