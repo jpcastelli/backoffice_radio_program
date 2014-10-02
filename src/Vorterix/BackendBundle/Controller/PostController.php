@@ -54,6 +54,7 @@ class PostController extends Controller
         $cover       = $request->request->get('post_cover');
         $video       = $request->request->get('post_video');
         $comments    = ($request->request->get('post_comments') == 'on') ? true : false;
+        $post_status   = ($request->request->get('post_status') != 'draft') ? true : false;
 
         //Get Category entity object
         $category = $em->getRepository('VorterixBackendBundle:Category')->find($category_id);
@@ -68,7 +69,7 @@ class PostController extends Controller
         $post->setShortDescription($shortDescription);
         $post->setCategory($category);
         $this->setPostGalleries($post, $galleries);
-        $post->setStatus(true);
+        $post->setStatus($post_status);
         $post->setCover($cover);
         $post->setMainVideo($video);
         $post->setComments($comments);

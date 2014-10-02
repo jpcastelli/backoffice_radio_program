@@ -47,16 +47,22 @@
                 $('#file_tree').fileTree({ root: '/', script:'{{ url('VorterixBackendBundle_FileTree') }}' }, function(file) { 
                     $('#post_video').val(file)
                 });
+                
+                $('#save-draft').click(function(e){
+                    e.preventDefault();
+                    $('#post_status').val('draft');
+                    $('form').submit();
+                });
   
             });  
     </script>
-
 {% endblock %}
 {% block title %}Vorterix :: Posts{% endblock %}
 {% block section_title %}Vorterix :: Posts{% endblock %}
 {% block content %}
     <form name="post_creation" action="{{ url('VorterixBackendBundle_post_save') }}" method="post">
         <input type="hidden" name="post_id" value="{{ post.id }}" />
+        <input type="hidden" name="post_status" id="post_status" value="{% if post.status == 1 %}{{ 'publish' }}{% endif %}" />
         <div class="col-md-8">
             <div class="box box-success">
                 <div class="box-header">
@@ -175,6 +181,7 @@
                 <div class="box-body">
                     <div class="form-group">
                         <button class="btn btn-success btn-lg">Guardar Post</button>
+                        <button id="save-draft" class="btn btn-warning btn-lg">Guardar Borrador</button>
                     </div>
                 </div>
             </div> 
