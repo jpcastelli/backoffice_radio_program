@@ -29,6 +29,20 @@ class Category
     private $name;
     
     /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="text")
+     */
+    private $description;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="cover", type="string", length=255)
+     */
+    private $cover;
+    
+    /**
      * Get id
      *
      * @return integer 
@@ -59,5 +73,51 @@ class Category
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return Category
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string 
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set cover
+     *
+     * @param string $cover
+     * @return Category
+     */
+    public function setCover($cover)
+    {
+        $this->cover = $cover;
+
+        return $this;
+    }
+
+    /**
+     * Get cover
+     *
+     * @return string 
+     */
+    public function getCover()
+    {
+        return $this->cover;
     }
 }

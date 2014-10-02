@@ -39,10 +39,13 @@ class CategoryController extends Controller
             $category = new \Vorterix\BackendBundle\Entity\Category();
         }
             
-        $name = $request->request->get('category_name');
+        $name        = $request->request->get('category_name');
+        $description = $request->request->get('category_description');
+            $cover   = $request->request->get('category_cover');
     
         $category->setName($name);
-        
+        $category->setDescription($description);
+        $category->setCover($cover);
         $em->persist($category);
         $em->flush();
         

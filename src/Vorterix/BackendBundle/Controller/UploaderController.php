@@ -27,6 +27,9 @@ class UploaderController extends Controller
             case 'gallery': 
                 $path = $this->getUploadsDir().'galleries/';
                 break;
+            case 'category':
+                $path = $this->getUploadsDir().'categories/cover/';
+                break;
         }
         //$fileExtension = strtolower($uploadedFile->guessExtension());
         $filename = $uploadedFile->getClientOriginalName();
