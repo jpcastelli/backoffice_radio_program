@@ -45,7 +45,7 @@ class JsonController extends Controller
             case 20: 
                 $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/guetap.json',  json_encode($posts));
             break;
-            case 20: 
+            case 21: 
                 $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/malditos_nerds.json',  json_encode($posts));
             break;
         
