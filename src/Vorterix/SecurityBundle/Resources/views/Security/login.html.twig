@@ -1,13 +1,12 @@
 {# src/Vorterix/SecurityBundle/Resources/views/Security/login.html.twig #}
 {% extends 'VorterixSecurityBundle::layout.html.twig' %}
-
 {% block content %}
 <div class="form-box" id="login-box">
     {% if error %}
     <div>{{ error.message }}</div>
 {% endif %}
     <div class="header">Sign In</div>
-    <form action="{{ path('VorterixSecurityBundle_login_check') }}" method="post">
+    <form action="{{ path('VorterixSecurityBundle_login_check') }}" id="login-box" method="post">
         <div class="body bg-gray">
             <div class="form-group">
                 <input type="text" id="username" name="_username" value="{{ last_username }}" class="form-control" placeholder="User ID" />
