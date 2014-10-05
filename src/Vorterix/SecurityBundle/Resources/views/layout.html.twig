@@ -1,0 +1,26 @@
+{# src/Vorterix/SecurityBundle/Resources/views/layout.html.twig #}
+{% extends '::base.html.twig' %}
+{% block meta %}
+    <meta charset="UTF-8">
+{% endblock %}
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/template/bootstrap.min.css') }}" type="text/css" />
+<link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/template/font-awesome.min.css') }}" type="text/css" />
+<link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/template/AdminLTE.css') }}" type="text/css" />
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+<![endif]-->
+{% endblock %}
+{% block body %}
+    {% block content %}
+    {% endblock %}
+    {% block javascripts %}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/template/bootstrap.min.js') }}"></script>         
+    {% endblock %}
+{% endblock %}
+
+    
