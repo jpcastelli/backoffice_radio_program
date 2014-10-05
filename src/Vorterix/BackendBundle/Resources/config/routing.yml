@@ -1,9 +1,9 @@
-admin:
-    path:     /hello/{name}
-    defaults: { _controller: VorterixBackendBundle:Default:index }
+index:
+    path:     /
+    defaults: { _controller: VorterixBackendBundle:Post:index }
 
 VorterixBackendBundle_post:
-    path:     backend/post/
+    path:     backend/post
     defaults: { _controller: VorterixBackendBundle:Post:index }
 
 VorterixBackendBundle_post_new:
@@ -45,16 +45,6 @@ VorterixBackendBundle_category_delete:
 VorterixBackendBundle_category_list:
     path:     backend/category/list/{id}
     defaults: { _controller: VorterixBackendBundle:Category:list, id : null }
-    
-login:
-    path:    backend/login
-    defaults: { _controller: VorterixBackendBundle:Security:login }
-    
-login_check:
-    path:    backend/login_check
-    
-VorterixBackendBundle_logout:
-    path:   /backend/logout
     
 VorterixBackendBundle_ajupload:
     pattern:  /backend/ajupload
