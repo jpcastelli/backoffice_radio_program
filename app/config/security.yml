@@ -15,12 +15,14 @@ security:
         login_firewall:
             pattern:   ^/backend/login$
             anonymous: ~
-        admin_area:
+        backend_area:
             pattern:    ^/backend
             http_basic: ~
+            security: false
             form_login:
                 login_path: /backend/login
                 check_path: /backend/login_check
+                csrf_provider: form.csrf_provider
             logout:
                 path:   /backend/logout
                 target: /backend/login

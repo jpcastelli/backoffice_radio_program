@@ -1,5 +1,5 @@
 index:
-    path:     /
+    path:     /backend
     defaults: { _controller: VorterixBackendBundle:Post:index }
 
 VorterixBackendBundle_post:

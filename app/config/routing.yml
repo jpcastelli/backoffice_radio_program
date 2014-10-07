@@ -1,4 +1,7 @@
 vorterix_backend:
     resource: "@VorterixBackendBundle/Resources/config/routing.yml"
     prefix:   /
-
+    
+vorterix_security:
+    resource: "@VorterixSecurityBundle/Resources/config/routing.yml"
+    prefix:   /
