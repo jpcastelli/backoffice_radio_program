@@ -5,6 +5,7 @@ namespace Vorterix\BackendBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use DateTime;
 
 class PostController extends Controller
 {
@@ -44,16 +45,19 @@ class PostController extends Controller
         }
         
         //Form Values
-        $title       = $request->request->get('post_title');
-        $pretitle    = $request->request->get('post_pretitle');
+        $title         = $request->request->get('post_title');
+        $pretitle      = $request->request->get('post_pretitle');
         $shortDescription = $request->request->get('post_short_description');
-        $description = $request->request->get('post_description');
-        $category_id = $request->request->get('post_category');  
-        $tags        = $request->request->get('tags');
-        $galleries   = $request->request->get('post_galleries');
-        $cover       = $request->request->get('post_cover');
-        $video       = $request->request->get('post_video');
-        $comments    = ($request->request->get('post_comments') == 'on') ? true : false;
+        $description   = $request->request->get('post_description');
+        $category_id   = $request->request->get('post_category');  
+        $tags          = $request->request->get('tags');
+        $galleries     = $request->request->get('post_galleries');
+        $cover         = $request->request->get('post_cover');
+        $video         = $request->request->get('post_video');
+        $publishTime   = $request->request->get('publish-time');
+        $publishDate   = $request->request->get('publish-date');
+        $progD         = $this->getFormatedDateTime($publishDate, $publishTime);
+        $comments      = ($request->request->get('post_comments') == 'on') ? true : false;
         $post_status   = ($request->request->get('post_status') != 'draft') ? true : false;
 
         //Get Category entity object
@@ -74,7 +78,7 @@ class PostController extends Controller
         $post->setMainVideo($video);
         $post->setComments($comments);
         $post->setCreateD(new \DateTime("now"));
-        $post->setPublishD(new \DateTime("now"));
+        $post->setPublishD($progD);
         
         /** @todo Improve saving tags after editing. */
         if(isset($postTags) && !empty($postTags)){//PostTags will be set if in edit mode.
@@ -119,7 +123,8 @@ class PostController extends Controller
         $tags = $this->getAllTagsAction();
         $galleries = $this->getAllGalleries();
         
-        return $this->render('VorterixBackendBundle:Post:edit.html.twig', array('post' => $post, 'tags' => $tags, 'galleries' => $galleries));   
+        return $this->render('VorterixBackendBundle:Post:edit.html.twig', array('post' => $post, 'tags' => $tags,
+                                                                                'galleries' => $galleries));   
     }
     
     public function deleteAction($id){
@@ -192,5 +197,32 @@ class PostController extends Controller
                 $post->addGallery($gallery);
             }
         }
+    }
+    
+    /**
+     * Since separate date and time returns formated datetimes
+     * @param type $date
+     * @param type $time
+     * @return \DateTime
+     */
+    private function getFormatedDateTime($date, $time){
+        //get separate date valies
+        $date = explode('/', $date);
+        $year = $date[2];
+        $month = $date[1];
+        $day = $date[0];
+        
+        //get separate time values
+        $time = explode(':', $time);
+        $hour = $time[0];
+        $minuteExp = explode(' ', $time[1]);
+        $minute = $minuteExp[0];
+ 
+        //create datetime object
+        $datetime = new DateTime();
+        $datetime->setTime($hour, $minute, '00');
+        $datetime->setDate($year, $month, $day);
+        
+        return $datetime;
     }
 }

@@ -5,6 +5,9 @@
     <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/jquery.tagit.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/uploadify/uploadify.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/jquery-filetree/jqueryFileTree.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/template/daterangepicker/daterangepicker-bs3.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/template/timepicker/bootstrap-timepicker.min.css') }}" type="text/css" />
+    
 {% endblock %}
 {% block javascripts %}
     {{parent()}}
@@ -14,6 +17,15 @@
     <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/tag-it.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/jquery-filetree/jquery.easing.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/jquery-filetree/jqueryFileTree.js') }}"></script> 
+    <script src="{{ asset('bundles/vorterixbackend/js/template/plugins/input-mask/jquery.inputmask.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/vorterixbackend/js/template/plugins/input-mask/jquery.inputmask.date.extensions.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/vorterixbackend/js/template/plugins/input-mask/jquery.inputmask.extensions.js') }}" type="text/javascript"></script>
+    <!-- date-range-picker -->
+    <script src="{{ asset('bundles/vorterixbackend/js/template/plugins/daterangepicker/daterangepicker.js') }}" type="text/javascript"></script>
+    <!-- bootstrap color picker -->
+    <script src="{{ asset('bundles/vorterixbackend/js/template/plugins/colorpicker/bootstrap-colorpicker.min.js') }}" type="text/javascript"></script>
+    <!-- bootstrap time picker -->
+    <script src="{{ asset('bundles/vorterixbackend/js/template/plugins/timepicker/bootstrap-timepicker.min.js') }}" type="text/javascript"></script>
     <script type="text/javascript">
             $(function() {
                 // Replace the <textarea id="editor1"> with a CKEditor
@@ -51,6 +63,41 @@
                     e.preventDefault();
                     $('#post_status').val('draft');
                     $('form').submit();
+                });
+                
+                //Datemask dd/mm/yyyy
+                $("#datemask").inputmask("dd/mm/yyyy", {"placeholder": "dd/mm/yyyy"});
+                //Datemask2 mm/dd/yyyy
+                $("#datemask2").inputmask("mm/dd/yyyy", {"placeholder": "mm/dd/yyyy"});
+                //Money Euro
+                $("[data-mask]").inputmask();
+
+                //Date range picker
+                $('#reservation').daterangepicker();
+                //Date range picker with time picker
+                $('#reservationtime').daterangepicker({timePicker: true, timePickerIncrement: 30, format: 'MM/DD/YYYY h:mm A'});
+                //Date range as a button
+                $('#daterange-btn').daterangepicker(
+                        {
+                            ranges: {
+                                'Today': [moment(), moment()],
+                                'Yesterday': [moment().subtract('days', 1), moment().subtract('days', 1)],
+                                'Last 7 Days': [moment().subtract('days', 6), moment()],
+                                'Last 30 Days': [moment().subtract('days', 29), moment()],
+                                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                                'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
+                            },
+                            startDate: moment().subtract('days', 29),
+                            endDate: moment()
+                        },
+                function(start, end) {
+                    $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                }
+                );
+        
+                //Timepicker
+                $(".timepicker").timepicker({
+                    showInputs: false
                 });
             });
     </script>
@@ -151,6 +198,30 @@
         <div class="box-success box">
             <div class="box-header"></div>
             <div class="box-body">
+                <label>Programar Publicaci&oacute;n</label>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <input type="text" class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask name="publish-date"/>
+                    </div><!-- /.input group -->
+                </div><!-- /.form group -->
+                <div class="bootstrap-timepicker">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control timepicker" name="publish-time"/>
+                            <div class="input-group-addon">
+                                <i class="fa fa-clock-o"></i>
+                            </div>
+                        </div><!-- /.input group -->
+                    </div><!-- /.form group -->
+                </div>
+            </div>
+        </div>  
+        <div class="box-success box">
+            <div class="box-header"></div>
+            <div class="box-body">
                 <label>Cover</label>
                 <div class="form-group"> 
                     <div id="queue"></div>
@@ -163,7 +234,7 @@
                     <label>Elija la ubicacion del video a usar como cover</label>
                     <div id="file_tree" class="vtx_tree"></div>
                     <br />
-                    <input type="text" class="form-control" placeholder="Post video" disabled="" id="post_video" name="post_video">
+                    <input type="text" class="form-control" placeholder="Post video" readonly="readonly" id="post_video" name="post_video">
                 </div>
             </div>
         </div>  
