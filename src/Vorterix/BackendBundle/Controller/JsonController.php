@@ -22,14 +22,32 @@ class JsonController extends Controller
                 ->from('VorterixBackendBundle:Post', 'q')
                 ->where('q.category = :id')
                 ->setParameter('id', $category)
+                 ->orderBy('q.publishD', 'DESC')
                 ->getQuery()
                 ->getResult();
+        
+        $notasxbloque = $this->getNotasxBloque();
+        
+        $postsBlock = 1;
+        $postCount = 1;
+        $postxblock = array();
+        
+        foreach($posts as $post){
+            if($postCount <= $notasxbloque[$postsBlock]){
+                $postxblock["notasbloque$postsBlock"][] = $post;
+                $postCount++;
+            }else{
+                $postsBlock++;
+                $postCount=1;
+                $postxblock["notasbloque$postsBlock"][] = $post;
+            }
+        }
         
         $json = json_encode(Array('settings'=>$this->getSettings(),'micrositios'=>  $this->getMicroSites(),
             'notasxprog'=>$this->getNotasxProg(),
             'ultimanota' =>$this->getUltimaNota(),
             'notasdestacadas' => $this->getNotaDestacada(),
-            'posts'=>$posts,
+            $postxblock,
             'bannertop'=>$this->getBannerTop(),
             'notasbloqueleidas'=>  $this->getNotasBloqueLeidas(),
             'videosmasvistos'=>  $this->getVideosMasVistos()), JSON_UNESCAPED_UNICODE);
@@ -180,5 +198,18 @@ class JsonController extends Controller
         $nleidas[] = $mli6;
         $nleidas[] = $mli7;
         return $nleidas;
+    }
+    
+    private function getNotasxBloque(){
+        $notasxbloque = Array();
+ 
+        $notasxbloque[1] = 3;
+        $notasxbloque[2] = 3;
+        $notasxbloque[3] = 4;
+        $notasxbloque[4] = 7;
+        $notasxbloque[5] = 4;
+        $notasxbloque[6] = 7;
+        
+        return $notasxbloque;
     }
 }
