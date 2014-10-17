@@ -14,18 +14,8 @@ class JsonController extends Controller
     }
     
     public function generateAction(Request $request){
-        $category = $request->request->get('post_category');
-        $em   = $this->getDoctrine()->getManager();
-        $posts  = $em
-                ->createQueryBuilder()
-                ->select('q.id,q.pretitle, q.title, q.shortDescription, q.description, q.cover, q.status, q.createD, q.comments')
-                ->from('VorterixBackendBundle:Post', 'q')
-                ->where('q.category = :id')
-                ->setParameter('id', $category)
-                 ->orderBy('q.publishD', 'DESC')
-                ->getQuery()
-                ->getResult();
-        
+        $category = $request->request->get('post_category');     
+        $posts = ($category == '0') ? $this->getAllPosts() : $this->getPostsByCategory($category);    
         $notasxbloque = $this->getNotasxBloque();
         
         $postsBlock = 1;
@@ -42,7 +32,7 @@ class JsonController extends Controller
                 $postxblock["notasbloque$postsBlock"][] = $post;
             }
         }
-        
+ 
         $json = json_encode(Array('settings'=>$this->getSettings(),'micrositios'=>  $this->getMicroSites(),
             'notasxprog'=>$this->getNotasxProg(),
             'ultimanota' =>$this->getUltimaNota(),
@@ -50,10 +40,13 @@ class JsonController extends Controller
             $postxblock,
             'bannertop'=>$this->getBannerTop(),
             'notasbloqueleidas'=>  $this->getNotasBloqueLeidas(),
-            'videosmasvistos'=>  $this->getVideosMasVistos()), JSON_UNESCAPED_UNICODE);
+            'videosmasvistos'=>  $this->getVideosMasVistos()));
  
         $fs = new \Symfony\Component\Filesystem\Filesystem();
         switch ($category){
+            case 0: 
+                $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/home.json', $json);
+            break;
             case 1: 
                 $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/tmn.json', $json);
             break;
@@ -212,4 +205,32 @@ class JsonController extends Controller
         
         return $notasxbloque;
     }
+    
+    private function getAllPosts(){
+        $em   = $this->getDoctrine()->getManager();
+        $posts  = $em
+                ->createQueryBuilder()
+                ->select('q.id,q.pretitle, q.title, q.shortDescription, q.description, q.cover, q.status, q.createD, q.comments')
+                ->from('VorterixBackendBundle:Post', 'q')
+                ->orderBy('q.publishD', 'DESC')
+                ->getQuery()
+                ->getResult();
+        return $posts;
+    }
+    
+    private function getPostsByCategory($category){
+        $em   = $this->getDoctrine()->getManager();
+        $posts  = $em
+                ->createQueryBuilder()
+                ->select('q.id,q.pretitle, q.title, q.shortDescription, q.description, q.cover, q.status, q.createD, q.comments')
+                ->from('VorterixBackendBundle:Post', 'q')
+                ->where('q.category = :id')
+                ->setParameter('id', $category)
+                 ->orderBy('q.publishD', 'DESC')
+                ->getQuery()
+                ->getResult();
+        return $posts;
+    }
+    
+    
 }
