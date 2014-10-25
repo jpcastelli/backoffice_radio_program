@@ -1,0 +1,34 @@
+#crop-module{
+    display: none;
+}
+
+#change-cover-img{
+    display: none;
+    margin: 0 0 10px 0;
+}
+
+#post_cover_image{
+    float: left;
+}
+
+#overlay{
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+#overlay .form-group{
+    margin: 50px;
+}
+
+#cover-container{
+    text-align: center;
+}
+
+#cover-image-choosen img{
+    margin-top: 10px;
+}
+
+#control-buttons{
+    text-align: center;
+}

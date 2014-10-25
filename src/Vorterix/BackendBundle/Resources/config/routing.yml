@@ -49,11 +49,19 @@ VorterixBackendBundle_category_list:
 VorterixBackendBundle_ajupload:
     pattern:  /backend/ajupload
     defaults: { _controller: VorterixBackendBundle:Uploader:ajUpload }
+    
+VorterixBackendBundle_removeImage:
+    pattern:  /backend/removeImage
+    defaults: { _controller: VorterixBackendBundle:Uploader:removeImage }
 
 VorterixBackendBundle_FileTree:
     pattern:  /backend/fileTree
     defaults: { _controller: VorterixBackendBundle:Uploader:fileTree }
-    
+
+VorterixBackendBundle_cropImage:
+    pattern:  /backend/cropImage
+    defaults: { _controller: VorterixBackendBundle:Uploader:cropImage }    
+
 VorterixBackendBundle_gallery:
     pattern:  /backend/gallery
     defaults: { _controller: VorterixBackendBundle:Gallery:index }

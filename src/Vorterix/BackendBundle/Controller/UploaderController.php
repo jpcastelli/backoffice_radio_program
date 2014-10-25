@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Gaufrette\Adapter\Ftp as FtpAdapter;
+use \Imagick;
 
 class UploaderController extends Controller
 {
@@ -15,10 +16,10 @@ class UploaderController extends Controller
      */
 
     public function ajUploadAction(Request $request){
-        $uploadedFile = $request->files->get('the_file');
-        $type = $request->request->get('type');
- 
-        $path = $this->getUploadsDir();
+        
+        $uploadedFile  = $request->files->get('the_file');
+        $type          = $request->request->get('type');
+        $path          = $this->getUploadsDir();
         
         switch($type){
             case 'post': 
@@ -31,11 +32,29 @@ class UploaderController extends Controller
                 $path = $this->getUploadsDir().'categories/cover/';
                 break;
         }
-        //$fileExtension = strtolower($uploadedFile->guessExtension());
-        $filename = $uploadedFile->getClientOriginalName();
-        $destinationFolder = $path;
-        $uploadedFile->move($destinationFolder, $filename);
-        return new Response($filename,200);
+   
+        $fileExtension = strtolower($uploadedFile->guessExtension());
+        //$filename      = $uploadedFile->getClientOriginalName();
+        $newFilename   = date('d-m-Y H.i.s').'.'.$fileExtension;
+        $uploadedFile->move($path, $newFilename);
+        
+        
+        
+
+        return new Response($newFilename);
+    }
+    
+    public function removeImageAction(Request $request){
+        $filename = $request->request->get('filename');
+        $path = $this->getPostsCoverFolder();
+        try{
+        if(unlink($path.$filename))
+           return new Response(Response::HTTP_OK);
+        else
+            return new Response(Response::HTTP_NOT_FOUND);
+        }  catch (\Exception $e){
+            return new Response(Response::HTTP_NOT_FOUND);
+        }
     }
     
     public function fileTreeAction(Request $request){
@@ -67,7 +86,30 @@ class UploaderController extends Controller
         return new Response( $tree );
     }
     
+    public function cropImageAction(Request $request){
+        $filename    = $request->request->get('filename');
+        $coverXpos   = $request->request->get('x-pos');
+        $coverYpos   = $request->request->get('y-pos');
+        $coverWidth  = $request->request->get('coverWidth');
+        $coverHeight = $request->request->get('coverHeight');
+        $coverFolder = $this->getPostsCoverFolder();
+
+        $imagickObj = new \Imagick($coverFolder.$filename);
+        $imagickObj->cropImage($coverWidth, $coverHeight, $coverXpos, $coverYpos);
+        //unlink($coverFolder.$filename);
+        
+        if($imagickObj->writeimage($coverFolder.$filename))
+           return new Response( Response::HTTP_OK );
+        else
+            return new Response( Response::HTTP_NOT_FOUND );
+        
+    }
+    
     private function getUploadsDir(){
         return __DIR__.'/../../../../web/uploads/';
+    }
+    
+    public function getPostsCoverFolder(){
+        return $this->getUploadsDir().'posts/cover/';
     }
 }
