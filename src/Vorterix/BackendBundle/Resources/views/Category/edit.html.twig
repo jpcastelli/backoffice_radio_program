@@ -21,8 +21,8 @@
                    'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
                    'multi'       : false,
                    'buttonText' : 'Elegir Imagen',
-                   'onUploadSuccess' : function(response) {
-                       $("#show-images").append('<input type="hidden" name="category_cover" value="'+response.name+'" /><img src="{{ asset('uploads/categories/cover/') }}' + response.name +'" width="100"  height="100"/>');
+                   'onUploadSuccess' : function(file, data,response) {
+                       $("#show-images").append('<input type="hidden" name="category_cover" value="'+data+'" /><img src="{{ asset('uploads/categories/cover/') }}' + data +'" width="100"  height="100"/>');
                    },
                    'debug'       : false,
                    'formData' : { 'type' : 'category' }
@@ -55,7 +55,7 @@
                     <a href="javascript:$('#file_upload').uploadify('upload','*')">Subir Archivos</a>
                     <div id="show-images"></div>
                     {% if category.cover %}
-                    <img src="/uploads/categories/cover/{{ category.cover }}" width="100" />
+                    <img src="/vtx_backend/web/uploads/categories/cover/{{ category.cover }}" width="100" />
                     <input type="hidden" name="category_cover" value="{{ category.cover }}" />
                     {% endif %}
                     
