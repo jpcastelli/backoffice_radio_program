@@ -18,8 +18,17 @@ class UploaderController extends Controller
     public function ajUploadAction(Request $request){
         
         $uploadedFile  = $request->files->get('the_file');
-        $type          = $request->request->get('type');
-        $path          = $this->getUploadsDir();
+        $type          = $request->request->get('type');     
+        $path = $this->getPath($type);
+   
+        $fileExtension = strtolower($uploadedFile->guessExtension());
+        $newFilename   = date('d-m-Y H.i.s').'.'.$fileExtension;
+        $uploadedFile->move($path, $newFilename);
+
+        return new Response($newFilename);
+    }
+    
+    public function getPath($type){
         
         switch($type){
             case 'post': 
@@ -32,21 +41,14 @@ class UploaderController extends Controller
                 $path = $this->getUploadsDir().'categories/cover/';
                 break;
         }
-   
-        $fileExtension = strtolower($uploadedFile->guessExtension());
-        //$filename      = $uploadedFile->getClientOriginalName();
-        $newFilename   = date('d-m-Y H.i.s').'.'.$fileExtension;
-        $uploadedFile->move($path, $newFilename);
-        
-        
-        
-
-        return new Response($newFilename);
+        return $path;
     }
     
     public function removeImageAction(Request $request){
         $filename = $request->request->get('filename');
-        $path = $this->getPostsCoverFolder();
+        $type     = $request->request->get('type');
+        $path     =  $this->getPath($type);
+        
         try{
         if(unlink($path.$filename))
            return new Response(Response::HTTP_OK);
@@ -92,7 +94,7 @@ class UploaderController extends Controller
         $coverYpos   = $request->request->get('y-pos');
         $coverWidth  = $request->request->get('coverWidth');
         $coverHeight = $request->request->get('coverHeight');
-        $coverFolder = $this->getPostsCoverFolder();
+        $coverFolder = $this->getPath('post');
 
         $imagickObj = new \Imagick($coverFolder.$filename);
         $imagickObj->cropImage($coverWidth, $coverHeight, $coverXpos, $coverYpos);
@@ -107,9 +109,5 @@ class UploaderController extends Controller
     
     private function getUploadsDir(){
         return __DIR__.'/../../../../web/uploads/';
-    }
-    
-    public function getPostsCoverFolder(){
-        return $this->getUploadsDir().'posts/cover/';
     }
 }

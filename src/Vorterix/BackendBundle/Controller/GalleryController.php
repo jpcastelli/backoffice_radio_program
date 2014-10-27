@@ -26,44 +26,38 @@ class GalleryController extends Controller
     
     public function saveAction(Request $request){
     
-        $galleryName = $request->request->get('gallery-name');
-        $uploadedImages = $request->request->get('images');
+        $galleryName       = $request->request->get('gallery-name');
+        $images            = $request->request->get('image-gallery');
+        $imagesDescription = $request->request->get('description-gallery');
         
         if($request->request->get('gallery_id')){
-            $id          = $request->request->get('gallery_id');
-            $em          = $this->getDoctrine()->getManager();
-            $gallery     = $em->getRepository($this->repository)->find($id);
-            $galleryImgs = $gallery->getImages();
-            
-            //get images assoc with gallery for checking existence.
-            $galleryImgsArr = array();
-            foreach($galleryImgs as $img){
-                 $galleryImgsArr[] = $img->getName();
+            $id            = $request->request->get('gallery_id');
+            $em            = $this->getDoctrine()->getManager();
+            $gallery       = $em->getRepository($this->repository)->find($id);
+            $galleryImages = $gallery->getImages();
+    
+            foreach($galleryImages as $image){
+                 $em->remove($image);
+                 $em->flush();
             }
         }else{
             $gallery = new Gallery();
         }
         
         $em = $this->getDoctrine()->getManager();
-        
+ 
         $gallery->setName($galleryName);
-        if(count($uploadedImages) > 0){
-            foreach($uploadedImages as $uploadImage){
-                $image = new Image();
-                $arrImagePath = explode('/', $uploadImage);
-                $name = $arrImagePath[count($arrImagePath)-1];
-                if(isset($galleryImgsArr) && count($galleryImgsArr) > 0){//edit mode check for image existence.
-                    if(!in_array($name, $galleryImgsArr)){
-                        $image->setName($name);
-                        $image->setGallery($gallery);
-                        $gallery->addImage($image);
-                    }
-                }else
-                {
-                    $image->setName($name);
-                    $image->setGallery($gallery);
-                    $gallery->addImage($image);
-                }
+        
+        if(count($images) > 0){
+            $counter = 0;
+            foreach($images as $imageName){
+                $image = new Image();          
+                $image->setName($imageName);
+                $image->setDescription($imagesDescription[$counter]);
+                $image->setGallery($gallery);
+                $gallery->addImage($image);
+            
+                $counter++;
             }
             $em->persist($image);
         }
@@ -86,6 +80,16 @@ class GalleryController extends Controller
     
         $em   = $this->getDoctrine()->getEntityManager();
         $gallery = $em->getRepository($this->repository)->find($id);
+        $images = $gallery->getImages();
+        $path = $this->getPath();
+        foreach($images as $image){
+            try{
+                $name = $image->getName();
+                unlink($path.$name);
+                }  catch (\Exception $e){
+                }
+        }
+        
         $em->remove($gallery);
         $em->flush();
         
@@ -96,19 +100,17 @@ class GalleryController extends Controller
     }
     
      public function editAction($id){
-         
-         $em   = $this->getDoctrine()->getEntityManager();
+         $em     = $this->getDoctrine()->getEntityManager();
         $gallery = $em->getRepository($this->repository)->find($id);
-
-        $images = $gallery->getImages();
-        /*
-        $images = $this->getDoctrine()
-                ->getRepository("VorterixBackendBundle:Image")
-                ->findBy(array('gallery_id' => $gallery->getId()));
-                echo "<pre>"; print_r($images);exit;
-                
-                $images->getG
-        */
+        $images  = $gallery->getImages();
+  
         return $this->render('VorterixBackendBundle:Gallery:edit.html.twig', array('gallery' => $gallery, 'images' => $images));   
     }
+    
+     public function getPath(){  
+        $path = __DIR__.'/../../../../web/uploads/galleries/';
+                
+        return $path;
+    }
+   
 }

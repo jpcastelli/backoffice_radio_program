@@ -28,6 +28,12 @@ class Image
      */
     private $name;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", length=255, nullable=true)
+     */
+    private $description;
 
     /**
      * @ORM\ManyToOne(targetEntity="Gallery", inversedBy="images")
@@ -89,5 +95,28 @@ class Image
     public function getGallery()
     {
         return $this->gallery;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return Image
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string 
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

@@ -89,3 +89,7 @@ VorterixBackendBundle_Json:
 VorterixBackendBundle_Json_generate:
     pattern:  /backend/Json/generateJson/{id}
     defaults: { _controller: VorterixBackendBundle:Json:generate, id: null }
+    
+VorterixBackendBundle_removeImageGallery:
+    pattern:  /backend/removeImageGallery
+    defaults: { _controller: VorterixBackendBundle:Image:removeImage }

@@ -27,8 +27,7 @@ class Gallery
      * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
-
-
+    
      /**
      * @ORM\OneToMany(targetEntity="Image", mappedBy="gallery", cascade={"persist"})
      */
@@ -107,4 +106,5 @@ class Gallery
     {
         return $this->images;
     }
+
 }
