@@ -13,6 +13,10 @@ VorterixBackendBundle_post_new:
 VorterixBackendBundle_post_save:
     path:     backend/post/save
     defaults: { _controller: VorterixBackendBundle:Post:save }
+    
+VorterixBackendBundle_removeCover:
+    path:     backend/post/removeCover
+    defaults: { _controller: VorterixBackendBundle:Post:removeCover }
 
 VorterixBackendBundle_post_edit:
     path:     backend/post/edit/{id}

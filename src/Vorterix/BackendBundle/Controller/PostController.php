@@ -225,4 +225,30 @@ class PostController extends Controller
         
         return $datetime;
     }
+    
+    
+    public function removeCoverAction(Request $request){
+        $postID   = $request->request->get('postID');
+        $filename = $request->request->get('filename');
+        
+        $em   = $this->getDoctrine()->getEntityManager();
+        $post = $em->getRepository($this->repository)->find($postID);
+        $post->setCover(null);
+        
+        $em->flush();
+        
+        try{
+        if(unlink($this->getUploadsDir().'posts/cover/'.$filename))
+           return new Response(Response::HTTP_OK);
+        else
+            return new Response(Response::HTTP_NOT_FOUND);
+        }  catch (\Exception $e){
+            return new Response(Response::HTTP_NOT_FOUND);
+        }
+        
+    }
+    
+    private function getUploadsDir(){
+        return __DIR__.'/../../../../web/uploads/';
+    }
 }

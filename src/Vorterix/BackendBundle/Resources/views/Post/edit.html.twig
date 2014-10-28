@@ -26,6 +26,7 @@
     <script src="{{ asset('bundles/vorterixbackend/js/cropper.min.js') }}" type="text/javascript"></script>
     <script type="text/javascript">
     $(function() {
+        initElements();
     CKEDITOR.replace('editor1');
     //bootstrap WYSIHTML5 - text editor
     //$(".textarea").wysihtml5();
@@ -50,6 +51,7 @@
        'onUploadComplete' : function(){
            $('#file_upload, #upload-link').toggle();
            toggleCrop();
+           $('#choose-cover').toggle();
            
            document.getElementById('post_cover_image').onload = function () {
                 new Cropper(this, {
@@ -67,29 +69,50 @@
        }
      });
      
+     function initElements(){
+         if($('#cover-image-choosen img').length > 0)
+             $('#choose-cover').toggle();
+     }
+     
      function toggleUploadElements(){
          $('#file_upload, #upload-link').toggle();
          $('#change-cover-img').toggle();
      }
      
      //Executes an ajax for removing a file.
+     $('#cover-image-choosen').on('click','#removeCover',function(e){
+         e.preventDefault();
+        if($('#post_cover').val() != ""){
+             var filename = $('#post_cover').val();
+         }
+        $('#post_cover').val('');
+        
+        $.ajax({
+            type: 'post',
+            url: '{{ url('VorterixBackendBundle_removeCover') }}',
+            data: { 'filename': filename, 'postID':$('#post_id').val() },
+            success: function(result){
+                if(result == '200'){
+                    $('#cover-image-choosen').html('');
+                    $('#choose-cover').toggle();
+                    $('#show-images').html('');
+                    changeCoverImg();
+                }
+                
+            }
+        });
+    });
+     
+     //Executes an ajax for removing a file.
      function removeCoverImage(){
          $.ajax({
             type: 'post',
-            url: '{{ url('VorterixBackendBundle_removeImage') }}',
-            data: { 'filename': $('#post_cover').val() },
+            url: '{{ url('VorterixBackendBundle_removeCover') }}',
+            data: { 'filename': $('#post_cover').val(), 'postID':$('#post_id').val() },
             success: function(result){
             }
         });
      }
-     
-     $('#choose-cover').click(function(e){
-         e.preventDefault();
-         var imgChoosen = $('#cover-image-choosen');
-         if(imgChoosen.find('img').length > 0)
-             changeCoverImg();
-         initOverlay();
-     });
      
      function initOverlay(){
          $('#overlay').dialog({  
@@ -122,6 +145,25 @@
          $('#crop-title').toggle();
          $('#crop-module').toggle();
      }
+     
+     $('#choose-cover').click(function(e){
+         e.preventDefault();
+         toggleCrop();
+         $('#overlay').dialog({  
+             width:'auto', 
+             resizable: true,
+             close: function( event, ui ) {
+                var d = new Date();
+                var time = d.getTime();
+                var src = $('#post_cover_image').attr('src');
+ 
+                if(typeof src !== 'undefined' ){
+                    $('#post_cover_image').attr('src',src+'?'+time);
+                    $('#cover-image-choosen').html('<a href="#" id="removeCover">Eliminar y cambiar</a><img src="'+ src +'?'+time+'" />');            
+                }
+            } 
+        });
+     });
 
      function initCropper(){
          toggleCrop();
@@ -150,6 +192,12 @@
             url: '{{ url('VorterixBackendBundle_cropImage') }}',
             data: { 'filename': $('#post_cover').val(), 'x-pos': coverXpos, 'y-pos': coverYpos, 'coverWidth': coverWidth, 'coverHeight': coverHeight },
             success: function(result){
+                var d = new Date();
+                var time = d.getTime();
+                var src = $('#post_cover_image').attr('src');
+                $('#post_cover_image').attr('src',src+'?'+time);
+                $('#cover-image-choosen').html('<img src="'+ src +'?'+time+'" id="post_cover_image" />');
+                $('#overlay').dialog("close");
             }
         });
      });
@@ -231,7 +279,7 @@
                 </div>
             </div>
         </div>
-        <input type="hidden" name="post_id" value="{{ post.id }}" />
+        <input type="hidden" name="post_id" id="post_id" value="{{ post.id }}" />
         <input type="hidden" name="post_status" id="post_status" value="{% if post.status == 1 %}{{ 'publish' }}{% endif %}" />
         <input type="hidden" name="post_cover" id="post_cover" value="{{ post.cover }}" />
         <div class="col-md-8">
@@ -349,7 +397,10 @@
                         <br />
                         <button id="choose-cover" class="btn btn-default">Elegir Imagen</button>
                         <div id="cover-image-choosen">
-                            <img src="/uploads/posts/cover/{{ post.cover }}" />
+                            {% if post.cover is defined and post.cover is not empty  %}
+                            <a href="#" id="removeCover">Eliminar y cambiar</a>
+                            <img src="{{ asset('uploads/posts/cover/')}}{{ post.cover }}" />
+                            {% endif %}
                         </div>
                     </div>
                     <div class="form-group">

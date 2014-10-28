@@ -26,6 +26,7 @@
     <script src="{{ asset('bundles/vorterixbackend/js/cropper.min.js') }}" type="text/javascript"></script>
     <script type="text/javascript">
         $(function() {
+            
     // Replace the <textarea id="editor1"> with a CKEditor
     // instance, using default configuration.
     CKEDITOR.replace('editor1');
@@ -52,6 +53,7 @@
        'onUploadComplete' : function(){
            $('#file_upload, #upload-link').toggle();
            toggleCrop();
+           $('#choose-cover').toggle();
            
            document.getElementById('post_cover_image').onload = function () {
                 new Cropper(this, {
@@ -75,25 +77,30 @@
     });
      
      //Executes an ajax for removing a file.
-     function removeCoverImage(){
-         $.ajax({
+     $('#cover-image-choosen').on('click','#removeCover',function(e){
+         e.preventDefault();
+        if($('#post_cover').val() != "")
+             var filename = $('#post_cover').val();
+ 
+        $.ajax({
             type: 'post',
             url: '{{ url('VorterixBackendBundle_removeImage') }}',
-            data: { 'filename': $('#post_cover').val() },
+            data: { 'filename': filename, 'type':'post' },
             success: function(result){
+                if(result == '200'){
+                    $('#cover-image-choosen').html('');
+                    $('#choose-cover').toggle();
+                    $('#show-images').html('');
+                    changeCoverImg();
+                }
+                
             }
         });
-     }
+    });
      
      $('#choose-cover').click(function(e){
          e.preventDefault();
-         var imgChoosen = $('#cover-image-choosen');
-         if(imgChoosen.find('img').length > 0)
-             changeCoverImg();
-         initOverlay();
-     });
-     
-     function initOverlay(){
+         
          $('#overlay').dialog({  
              width:'auto', 
              resizable: true,
@@ -101,11 +108,14 @@
                 var d = new Date();
                 var time = d.getTime();
                 var src = $('#post_cover_image').attr('src');
-                $('#post_cover_image').attr('src',src+'?'+time);
-                $('#cover-image-choosen').html('<img src="'+ src +'?'+time+'" />');
+ 
+                if(typeof src !== 'undefined' ){
+                    $('#post_cover_image').attr('src',src+'?'+time);
+                    $('#cover-image-choosen').html('<a href="#" id="removeCover">Eliminar</a><img src="'+ src +'?'+time+'" />');            
+                }
             } 
         });
-     }
+     });
      
      $('#change-cover-img').click(function(e){
          e.preventDefault();
@@ -113,13 +123,12 @@
      });
      
      function changeCoverImg(){
-         removeCoverImage();
          $('#file_upload, #upload-link').show();
          toggleCrop();
          $('#show-images').html('');
      }
      
-     function toggleCrop(){        
+     function toggleCrop(){    
          $('#change-cover-img').toggle();
          $('#crop-title').toggle();
          $('#crop-module').toggle();
