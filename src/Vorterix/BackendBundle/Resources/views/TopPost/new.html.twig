@@ -1,0 +1,361 @@
+{% extends 'VorterixBackendBundle::layout.html.twig' %}
+{% block stylesheets %}
+    {{parent()}}
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css">
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/jquery.tagit.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/uploadify/uploadify.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/jquery-filetree/jqueryFileTree.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/template/daterangepicker/daterangepicker-bs3.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/template/timepicker/bootstrap-timepicker.min.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/cropper.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/styles.css') }}" type="text/css" /> 
+{% endblock %}
+{% block javascripts %}
+    {{parent()}}
+    <script src="{{ asset('bundles/vorterixbackend/js/template/plugins/ckeditor/ckeditor.js') }}" type="text/javascript"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/uploadify/jquery.uploadify.min.js') }}"></script> 
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/tag-it.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/jquery-filetree/jquery.easing.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/jquery-filetree/jqueryFileTree.js') }}"></script> 
+    <script src="{{ asset('bundles/vorterixbackend/js/template/plugins/input-mask/jquery.inputmask.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/vorterixbackend/js/template/plugins/input-mask/jquery.inputmask.date.extensions.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/vorterixbackend/js/template/plugins/input-mask/jquery.inputmask.extensions.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/vorterixbackend/js/template/plugins/daterangepicker/daterangepicker.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/vorterixbackend/js/template/plugins/timepicker/bootstrap-timepicker.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/vorterixbackend/js/cropper.min.js') }}" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function() {
+            
+    // Replace the <textarea id="editor1"> with a CKEditor
+    // instance, using default configuration.
+    CKEDITOR.replace('editor1');
+    //bootstrap WYSIHTML5 - text editor
+    //$(".textarea").wysihtml5();
+    $("#myTags").tagit({tagLimit: 5, availableTags: [{% for tag in tags %}"{{ tag.name }}"{% if loop.index < loop.length %},{% endif %}{% endfor %}]});
+    
+    $('#file_upload').uploadify({
+       'auto'        : false,
+       'swf'         : '{{ asset('bundles/vorterixbackend/swf/uploadify.swf') }}',
+       'uploader'    : '{{ url('VorterixBackendBundle_ajupload') }}',
+       'fileObjName' : 'the_file',
+       'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
+       'multi'       : false,
+       'buttonText' : 'Elegir Imagen',
+       'debug'       : false,
+       'formData' : { 'type' : 'post' },
+       'onUploadSuccess' : function(file, data,response) {  
+           $('#show-images').html('');
+           var coverFolder = '{{ asset('uploads/posts/cover/') }}';
+            $('#post_cover').val(data);
+            $("#show-images").append('<img src="'+coverFolder + data +'" id="post_cover_image" />');
+       },
+       'onUploadComplete' : function(){
+           $('#file_upload, #upload-link').toggle();
+           toggleCrop();
+           $('#choose-cover').toggle();
+           
+           document.getElementById('post_cover_image').onload = function () {
+                new Cropper(this, {
+                        ratio: {
+                        width:  16,
+                        height: 9
+                        },update: function (coordinates) {
+                            $('#cover-x-position').val(coordinates.x);
+                            $('#cover-y-position').val(coordinates.y);
+                            $('#cover-width').val(coordinates.width);
+                            $('#cover-height').val(coordinates.height);
+                        }
+               });
+           };
+       }
+     });
+     
+     $("#uploadImgs").click(function (e) { 
+        e.preventDefault(); 
+        $('#file_upload').uploadifyUpload();
+    });
+     
+     //Executes an ajax for removing a file.
+     $('#cover-image-choosen').on('click','#removeCover',function(e){
+         e.preventDefault();
+        if($('#post_cover').val() != "")
+             var filename = $('#post_cover').val();
+ 
+        $.ajax({
+            type: 'post',
+            url: '{{ url('VorterixBackendBundle_removeImage') }}',
+            data: { 'filename': filename, 'type':'post' },
+            success: function(result){
+                if(result == '200'){
+                    $('#cover-image-choosen').html('');
+                    $('#choose-cover').toggle();
+                    $('#show-images').html('');
+                    changeCoverImg();
+                }
+                
+            }
+        });
+    });
+     
+     $('#choose-cover').click(function(e){
+         e.preventDefault();
+         
+         $('#overlay').dialog({  
+             width:'auto', 
+             resizable: true,
+             close: function( event, ui ) {
+                var d = new Date();
+                var time = d.getTime();
+                var src = $('#post_cover_image').attr('src');
+ 
+                if(typeof src !== 'undefined' ){
+                    $('#post_cover_image').attr('src',src+'?'+time);
+                    $('#cover-image-choosen').html('<a href="#" id="removeCover">Eliminar</a><img src="'+ src +'?'+time+'" />');            
+                }
+            } 
+        });
+     });
+     
+     $('#change-cover-img').click(function(e){
+         e.preventDefault();
+         changeCoverImg();
+     });
+     
+     function changeCoverImg(){
+         $('#file_upload, #upload-link').show();
+         toggleCrop();
+         $('#show-images').html('');
+     }
+     
+     function toggleCrop(){    
+         $('#change-cover-img').toggle();
+         $('#crop-title').toggle();
+         $('#crop-module').toggle();
+     }
+     
+     //Once crop marked sends ajax with coords params for cropping server side.
+     $("#send-crop").click(function(){
+        var coverXpos   = $('#cover-x-position').val();
+        var coverYpos   = $('#cover-y-position').val();
+        var coverWidth  = $('#cover-width').val();
+        var coverHeight = $('#cover-height').val();
+     
+        $.ajax({
+            type: 'post',
+            url: '{{ url('VorterixBackendBundle_cropImage') }}',
+            data: { 'filename': $('#post_cover').val(), 'x-pos': coverXpos, 'y-pos': coverYpos, 'coverWidth': coverWidth, 'coverHeight': coverHeight },
+            success: function(result){
+                var d = new Date();
+                var time = d.getTime();
+                var src = $('#post_cover_image').attr('src');
+                $('#post_cover_image').attr('src',src+'?'+time);
+                $('#cover-image-choosen').html('<img src="'+ src +'?'+time+'" id="post_cover_image" />');
+                $('#overlay').dialog("close");
+            }
+        });
+     });
+
+    $('#file_tree').fileTree({ root: '/', script:'{{ url('VorterixBackendBundle_FileTree') }}' }, function(file) { 
+        $('#post_video').val(file)
+    });
+
+    $('#save-draft').click(function(e){
+        e.preventDefault();
+        $('#post_status').val('draft');
+        $('form').submit();
+    });
+
+    //Datemask dd/mm/yyyy
+    $("#datemask").inputmask("dd/mm/yyyy", {"placeholder": "dd/mm/yyyy"});
+    //Datemask2 mm/dd/yyyy
+    $("#datemask2").inputmask("mm/dd/yyyy", {"placeholder": "mm/dd/yyyy"});
+    //Money Euro
+    $("[data-mask]").inputmask();
+
+    //Date range picker
+    $('#reservation').daterangepicker();
+    //Date range picker with time picker
+    $('#reservationtime').daterangepicker({timePicker: true, timePickerIncrement: 30, format: 'MM/DD/YYYY h:mm A'});
+    //Date range as a button
+    $('#daterange-btn').daterangepicker(
+            {
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract('days', 1), moment().subtract('days', 1)],
+                    'Last 7 Days': [moment().subtract('days', 6), moment()],
+                    'Last 30 Days': [moment().subtract('days', 29), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
+                },
+                startDate: moment().subtract('days', 29),
+                endDate: moment()
+            },
+    function(start, end) {
+        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+    }
+    );
+
+    //Timepicker
+    $(".timepicker").timepicker({
+        showInputs: false
+    });
+    
+});
+    </script>
+{% endblock %}
+{% block title %}Vorterix :: Posts{% endblock %}
+{% block section_title %}Vorterix :: Posts{% endblock %}
+{% block content %}
+    <form name="post_creation" action="{{ url('VorterixBackendBundle_post_save') }}" method="post">
+    <div id="overlay">
+        <div class="form-group"> 
+            <div id="queue"></div>
+            <input id="file_upload" name="file_upload" type="file" multiple="false">
+            <a id="upload-link" href="javascript:$('#file_upload').uploadify('upload','*')">Subir Archivos</a>
+            <button id="change-cover-img" class="btn btn-success btn-sm">Cambiar Imagen</button><br />
+            <label style="display: none;" id="crop-title">Selecciona el area de la imagen que quieras visible (Click sobre imagen + drag)</label>
+            <div id="show-images"></div>
+
+            <div id="crop-module" class="col-xs-7">
+                <input type="text" name="cover-x-position" id="cover-x-position" class="form-control hidden" />
+                <input type="text" name="cover-y-position" id="cover-y-position" class="form-control hidden" />
+                <input type="text" name="cover-width"      id="cover-width"      class="form-control hidden" />
+                <input type="text" name="cover-height"     id="cover-height"     class="form-control hidden" />
+                <button id="send-crop" class="btn btn-success btn-sm">Cortar Imagen</button>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="post_status" id="post_status" />
+    <input type="hidden" name="post_cover" id="post_cover" />
+    <div class="col-md-8">
+        <div class="box box-solid box-success">
+            <div class="box-header">
+                <h3 class="box-title">Titulos</h3>
+            </div>
+            <div class="box-body">
+                <div class="form-group">
+                    <input class="form-control input-lg" name="post_pretitle" type="text" placeholder="Pretitulo">
+                </div>
+                <div class="form-group">
+                    <input class="form-control input-lg" name="post_title" type="text" placeholder="Titulo">
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control input-lg" name="post_short_description" rows="3" placeholder="Copete"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class='row'>
+            <div class='col-md-12'>
+                <div class='box box-solid box-success'>
+                    <div class='box-header'>
+                        <h3 class='box-title'>Galeria de Imagenes</h3>
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label>Elige las galer&iacute;as que quieras adjuntar al post (Ctrl para seleccionar varias)</label>
+                            <select multiple="" name="post_galleries[]" class="form-control">
+                                {% for gallery in galleries %}
+                                <option value="{{ gallery.id }}">{{ gallery.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class='row'>
+            <div class='col-md-12'>
+                <div class='box box-solid box-success'>
+                    <div class='box-header'>
+                        <h3 class='box-title'>Descripci&oacute;n</h3>
+                    </div><!-- /.box-header -->
+                    <div class='box-body pad'>
+                            <textarea id="editor1" name="post_description" rows="10" cols="80">
+                            </textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="box box-success">
+            <div class="box-header">  
+            </div>
+            <div class="box-body">
+                <div class="form-group">
+                    {% render url('VorterixBackendBundle_category_list') %}
+                </div>
+                <div class="form-group">
+                    <label>Etiquetas (XXXX + Enter)</label>
+                    <ul id="myTags">
+                        <li></li>
+                    </ul>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="post_comments"/>
+                            &nbsp;Comentarios Habilitados?
+                        </label>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="box box-success">
+            <div class="box-header"></div>
+            <div class="box-body">
+                <label>Programar Publicaci&oacute;n</label>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <input type="text" class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask name="publish-date"/>
+                    </div><!-- /.input group -->
+                </div><!-- /.form group -->
+                <div class="bootstrap-timepicker">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control timepicker" name="publish-time"/>
+                            <div class="input-group-addon">
+                                <i class="fa fa-clock-o"></i>
+                            </div>
+                        </div><!-- /.input group -->
+                    </div><!-- /.form group -->
+                </div>
+            </div>
+        </div>  
+        <div class="box box-success">
+            <div class="box-header"></div>
+            <div class="box-body">
+                <div id="cover-container" class="form-group">
+                    <label>Imagen Principal</label>                       
+                    <br />
+                    <button id="choose-cover" class="btn btn-default">Elegir Imagen</button>
+                    <div id="cover-image-choosen"></div>
+                </div>
+                <div class="form-group">
+                    <label>Elija la ubicacion del video a usar como cover</label>
+                    <div id="file_tree" class="vtx_tree"></div>                         
+                    <br />
+                    <input type="text" class="form-control" placeholder="Post video" readonly="readonly" id="post_video" name="post_video">
+                </div>
+            </div>
+        </div>  
+        <div class="box box-success">
+            <div class="box-header"></div>
+            <div id="control-buttons" class="box-body">
+                <div class="form-group">
+                    <button class="btn btn-success btn-lg">Publicar</button>
+                    <button id="save-draft" class="btn btn-warning btn-lg">Guardar Borrador</button>
+                </div>
+            </div>
+        </div>  
+    </div>
+ </form>
+{% endblock %}
