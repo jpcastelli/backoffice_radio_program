@@ -68,6 +68,12 @@ class JsonController extends Controller
             case 21: 
                 $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/malditos_nerds.json', $json);
             break;
+            case 25: 
+                $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/cartelera.json', $json);
+            break;
+            case 26: 
+                $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/opinion.json', $json);
+            break;
         
         }
         
