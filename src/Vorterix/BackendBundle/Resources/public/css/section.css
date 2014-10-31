@@ -1,0 +1,16 @@
+#show-images{
+    text-align: center;
+    margin-top: 10px;
+}
+
+#show-images button{
+    margin-bottom: 10px;
+}
+
+#file_upload{
+    margin: 0 auto;
+}
+
+#upload-module{
+    text-align: center;
+}

@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class JsonController extends Controller
 {
+    protected $maxPostsBlock = 7;
    
     public function indexAction()
     {
@@ -14,71 +15,93 @@ class JsonController extends Controller
     }
     
     public function generateAction(Request $request){
+        
         $category = $request->request->get('post_category');     
-        $posts = ($category == '0') ? $this->getAllPosts() : $this->getPostsByCategory($category);    
-        $notasxbloque = $this->getNotasxBloque();
+        if($category == '0'){//Category HOME
+            $posts = $this->getAllPosts();
+        }
+        else{
+            $posts = $this->getPostsByCategory($category);  
+        }
+        
+        $postsOpinion   = $this->getPostsByCategory(26); 
+        $postsCartelera = $this->getPostsByCategory(25); 
+        $notasxbloque   = $this->getNotasxBloque();
         
         $postsBlock = 1;
         $postCount = 1;
         $postxblock = array();
         
         foreach($posts as $post){
-            if($postCount <= $notasxbloque[$postsBlock]){
-                $postxblock["notasbloque$postsBlock"][] = $post;
-                $postCount++;
-            }else{
-                $postsBlock++;
-                $postCount=1;
-                $postxblock["notasbloque$postsBlock"][] = $post;
+            if($postsBlock <= $this->maxPostsBlock){
+                if($postCount <= $notasxbloque[$postsBlock]){
+                    $postxblock["notasbloque$postsBlock"][] = $post;
+                    $postCount++;
+                }else{
+                    
+                    $postCount=1;
+                    $postsBlock++;
+                    $postxblock["notasbloque$postsBlock"][] = $post;
+                    $postCount++;
+                }
             }
         }
  
-        $json = json_encode(Array('settings'=>$this->getSettings(),'micrositios'=>  $this->getMicroSites(),
-            'notasxprog'=>$this->getNotasxProg(),
-            'ultimanota' =>$this->getUltimaNota(),
-            'notasdestacadas' => $this->getNotaDestacada(),
-            $postxblock,
-            'bannertop'=>$this->getBannerTop(),
-            'notasbloqueleidas'=>  $this->getNotasBloqueLeidas(),
-            'videosmasvistos'=>  $this->getVideosMasVistos()));
+        $json = json_encode(
+                Array(
+                    'settings'          => $this->getSettings(),
+                    'micrositios'       => $this->getMicroSites(),
+                    'notasxprog'        => $this->getNotasxProg(),
+                    'ultimanota'        => $this->getUltimaNota(),
+                    'notasdestacadas'   => $this->getNotaDestacada(),
+                    $postxblock,
+                    'bannertop'         => $this->getBannerTop(),
+                    'notasbloqueleidas' => $this->getNotasBloqueLeidas(),
+                    'videosmasvistos'   => $this->getVideosMasVistos(),
+                    'postsCartelera'    => $postsCartelera,
+                    'postsOpinion'      => $postsOpinion
+                )
+            );
  
         $fs = new \Symfony\Component\Filesystem\Filesystem();
-        switch ($category){
-            case 0: 
-                $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/home.json', $json);
-            break;
-            case 1: 
-                $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/tmn.json', $json);
-            break;
-            case 3: 
-                $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/acido.json',  $json);
-            break;
-            case 6: 
-                $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/delicias.json',  $json);
-            break;
-            case 13: 
-                $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/grupo_muerte.json', $json);
-            break;
-            case 19: 
-                $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/newsterix.json', $json);
-            break;
-            case 20: 
-                $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/guetap.json', $json);
-            break;
-            case 21: 
-                $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/malditos_nerds.json', $json);
-            break;
-            case 25: 
-                $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/cartelera.json', $json);
-            break;
-            case 26: 
-                $fs->dumpFile(__DIR__.'/../../../../web/uploads/json/opinion.json', $json);
-            break;
-        
-        }
+        $path = $this->getPath($category);
+        $fs->dumpFile($path, $json);
         
         return $this->render('VorterixBackendBundle:Json:index.html.twig', array('status'=>true, 'message' => "Json Creado exitosamente"));  
+    }
+
+
+    private function getPath($category){
+        
+        switch ($category){
+            case 0: 
+                $path = __DIR__.'/../../../../web/uploads/json/home.json';
+            break;
+            case 1: 
+                $path = __DIR__.'/../../../../web/uploads/json/tmn.json';
+            break;
+            case 3: 
+                $path = __DIR__.'/../../../../web/uploads/json/acido.json';
+            break;
+            case 6: 
+                $path = __DIR__.'/../../../../web/uploads/json/delicias.json';
+            break;
+            case 13: 
+                $path = __DIR__.'/../../../../web/uploads/json/grupo_muerte.json';
+            break;
+            case 19: 
+                $path = __DIR__.'/../../../../web/uploads/json/newsterix.json';
+            break;
+            case 20: 
+                $path = __DIR__.'/../../../../web/uploads/json/guetap.json';
+            break;
+            case 21: 
+                $path = _DIR__.'/../../../../web/uploads/json/malditos_nerds.json';
+            break;
         }
+        
+        return $path;
+    }
         
     private function getSettings(){
         $arrmsj = Array();
@@ -236,6 +259,10 @@ class JsonController extends Controller
                 ->getQuery()
                 ->getResult();
         return $posts;
+    }
+    
+    private function getPostsCartelera(){
+        
     }
     
     

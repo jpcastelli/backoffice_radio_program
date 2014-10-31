@@ -1,0 +1,112 @@
+{% extends 'VorterixBackendBundle::layout.html.twig' %}
+{% block title %}Vorterix :: Section{% endblock %}
+{% block section_title %}Vorterix :: Section{% endblock %}
+{% block stylesheets %}
+    {{parent()}}
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/uploadify/uploadify.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/section.css') }}" type="text/css" />
+{% endblock %}
+{% block javascripts %}
+{{parent()}}
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/uploadify/jquery.uploadify.min.js') }}"></script> 
+<script type="text/javascript">
+$(function() {
+    $('#file_upload').uploadify({
+       'auto'        : false,
+       'swf'         : '{{ asset('bundles/vorterixbackend/swf/uploadify.swf') }}',
+       'uploader'    : '{{ url('VorterixBackendBundle_section_saveImage') }}',
+       'fileObjName' : 'the_file',
+       'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
+       'multi'       : false,
+       'buttonText' : 'Elegir Imagen',
+       'onUploadSuccess' : function(file, data,response) {
+           $("#show-images").html('<button href="' + data +'" id="remove-image" class="btn btn-danger btn-sm">Eliminar Imagen</button>\n\
+                                     <input type="hidden" name="section_cover" value="'+data+'" />\n\
+                                     <img src="{{ asset('uploads/section/cover/') }}' + data +'" />');
+       },
+       'onUploadComplete' : function(){
+           $('#upload-module').toggle();
+       },
+       'debug'       : false,
+       'formData' : { 'type' : 'section', sectionID: $('#section_id').val() }
+     });
+
+     $("#uploadImgs").click(function (e) { e.preventDefault(); 
+        $('#file_upload').uploadifyUpload();
+    });
+
+    $("#show-images").on("click", "#remove-image", function(e){
+        e.preventDefault();
+        var filename  = $(this).attr('href'); 
+        var sectionID = $('#section_id').val();
+        
+        $("#show-images").html('');
+        $.ajax({
+            type: 'post',
+            url: '{{ url('VorterixBackendBundle_section_removeImage') }}',
+            data: { 'filename': filename, 'type': 'section', 'sectionID':sectionID },
+            success: function(result){
+                $('#upload-module').toggle();
+            }
+        });
+    });
+    
+    {% if section.cover %}$('#upload-module').toggle();{% endif %}
+
+});
+</script>
+{% endblock %}
+{% block content %}
+    <form name="post_creation" action="{{ url('VorterixBackendBundle_section_save') }}" method="post">
+    <input type="hidden" id="section_id" name="section_id" value="{{ section.id }}" />
+    <div class="col-md-8">
+        <div class="box box-solid box-info">
+            <div class="box-header">
+                <h3 class="box-title"></h3>
+            </div>
+            <div class="box-body">
+                <div class="form-group">
+                    <input class="form-control input-lg" name="name" type="text" value="{{ section.name }}" placeholder="Titulo">
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control input-lg" name="description" rows="3" placeholder="Descripcion">{{ section.description }}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="box box-solid box-info">
+            <div class="box-header">&nbsp;</div>
+            <div class="box-body">
+                <div class="form-group">
+                    <button class="btn btn-primary btn-lg">Guardar</button>
+                </div>
+                <div class="box box-solid box-info">
+                    <div class="box-header">&nbsp;</div>
+                    <div class="box-body">
+                        <div class="form-group"> 
+                            
+                            <div id="upload-module">
+                                <div id="queue"></div>
+                                <input id="file_upload" name="file_upload" type="file" multiple="false">
+                                <a href="javascript:$('#file_upload').uploadify('upload','*')">Subir Archivo</a>
+                            </div>
+                            
+                            <div id="show-images">
+                                {% if section.cover %}
+                                <button href="{{ section.cover }}" id="remove-image" class="btn btn-danger btn-sm">Eliminar Imagen</button>
+                                <img src="{{ asset('/uploads/section/cover/')}}{{ section.cover }}"  />
+                                <input type="hidden" name="section_cover" value="{{ section.cover }}" />
+                                {% endif %}
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    </form>
+{% endblock %}

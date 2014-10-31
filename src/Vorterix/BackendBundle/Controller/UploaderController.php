@@ -40,6 +40,9 @@ class UploaderController extends Controller
             case 'category':
                 $path = $this->getUploadsDir().'categories/cover/';
                 break;
+            case 'section':
+                $path = $this->getUploadsDir().'section/cover/';
+                break;
         }
         return $path;
     }

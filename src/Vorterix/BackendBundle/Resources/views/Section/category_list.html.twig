@@ -1,0 +1,7 @@
+<label>Programa</label>
+<select class="form-control" name="post_category">
+    <option value="0">Seleccione un programa</option>
+    {% for category in categories %}
+    <option {% if category.id == selected_id %}selected{% endif %} value="{{ category.id }}">{{ category.name }}</option>
+    {% endfor %}
+</select>

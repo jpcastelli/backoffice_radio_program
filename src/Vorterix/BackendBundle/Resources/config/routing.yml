@@ -97,3 +97,37 @@ VorterixBackendBundle_Json_generate:
 VorterixBackendBundle_removeImageGallery:
     pattern:  /backend/removeImageGallery
     defaults: { _controller: VorterixBackendBundle:Image:removeImage }
+
+ 
+VorterixBackendBundle_section:
+    path:     backend/section
+    defaults: { _controller: VorterixBackendBundle:Section:index }
+
+VorterixBackendBundle_section_new:
+    path:     backend/section/new
+    defaults: { _controller: VorterixBackendBundle:Section:new }
+
+VorterixBackendBundle_section_save:
+    path:     backend/section/save
+    defaults: { _controller: VorterixBackendBundle:Section:save }
+
+VorterixBackendBundle_section_edit:
+    path:     backend/section/edit/{id}
+    defaults: { _controller: VorterixBackendBundle:Section:edit, id : null }
+
+VorterixBackendBundle_section_delete:
+    path:     backend/section/delete/{id}
+    defaults: { _controller: VorterixBackendBundle:Section:delete, id : null }
+    
+VorterixBackendBundle_section_list:
+    path:     backend/section/list/{id}
+    defaults: { _controller: VorterixBackendBundle:Section:list, id : null }
+    
+VorterixBackendBundle_section_removeImage:
+    path:     backend/section/removeImage
+    defaults: { _controller: VorterixBackendBundle:Section:removeImage }
+    
+VorterixBackendBundle_section_saveImage:
+    path:     backend/section/saveImage
+    defaults: { _controller: VorterixBackendBundle:Section:saveImage }
+    
