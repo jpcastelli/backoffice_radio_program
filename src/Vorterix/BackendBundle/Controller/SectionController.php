@@ -54,7 +54,7 @@ class SectionController extends Controller
         $em->flush();
         
         $sections = $this->getAllSections();
-        $this->get('session')->getFlashBag()->add('notice','Perfecto! La seccion ha sido agregada exitosamente.');
+        $this->get('session')->getFlashBag()->add('success','Perfecto! La seccion ha sido agregada exitosamente.');
         return $this->redirect( $this->generateUrl('VorterixBackendBundle_section', array('sections' => $sections)));
 
     }
@@ -73,8 +73,8 @@ class SectionController extends Controller
         $section  = $em->getRepository($this->repository)->find($id);
         $path     = $this->getPath();
         
-        if($section->getCover()){
-            $image    = $section->getCover();
+        if($section->getCover() != ''){
+            $image = $section->getCover();
             unlink($path.$image);
         }
         
@@ -82,7 +82,7 @@ class SectionController extends Controller
         $em->remove($section);
         $em->flush();
  
-        $this->get('session')->getFlashBag()->add('notice','Perfecto! La seccion ha sido eliminada exitosamente.');
+        $this->get('session')->getFlashBag()->add('success','Perfecto! La seccion ha sido eliminada exitosamente.');
         return $this->redirect( $this->generateUrl('VorterixBackendBundle_section', array('sections' => $sections)));
  
     }

@@ -96,7 +96,7 @@ $(function() {
                             <div id="show-images">
                                 {% if section.cover %}
                                 <button href="{{ section.cover }}" id="remove-image" class="btn btn-danger btn-sm">Eliminar Imagen</button>
-                                <img src="{{ asset('/uploads/section/cover/')}}{{ section.cover }}"  />
+                                <img src="{{ asset('uploads/section/cover/')}}{{ section.cover }}"  />
                                 <input type="hidden" name="section_cover" value="{{ section.cover }}" />
                                 {% endif %}
                             </div>
