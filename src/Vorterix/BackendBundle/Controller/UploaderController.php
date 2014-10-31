@@ -68,7 +68,7 @@ class UploaderController extends Controller
         $password = "ggAhGyJD";
         
         $dir = $request->request->get('dir');
-        $ftp = new FtpAdapter($dir, $host, array("username" => $username, "password" => $password));
+        $ftp = new FtpAdapter($dir, $host, array("username" => $username, "password" => $password, "passive" => true));
         $files = $ftp->listDirectory('/');
         
         $tree = "<ul class=\"jqueryFileTree\" style=\"display: none;\">";
