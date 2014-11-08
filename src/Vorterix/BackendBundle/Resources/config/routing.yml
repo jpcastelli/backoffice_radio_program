@@ -94,9 +94,9 @@ VorterixBackendBundle_Json_generate:
     pattern:  /backend/Json/generateJson/{id}
     defaults: { _controller: VorterixBackendBundle:Json:generate, id: null }
     
-VorterixBackendBundle_removeImageGallery:
-    pattern:  /backend/removeImageGallery
-    defaults: { _controller: VorterixBackendBundle:Image:removeImage }
+VorterixBackendBundle_image_remove:
+    pattern:  /backend/image/remove
+    defaults: { _controller: VorterixBackendBundle:Image:remove }
 
  
 VorterixBackendBundle_section:
@@ -130,4 +130,16 @@ VorterixBackendBundle_section_removeImage:
 VorterixBackendBundle_section_saveImage:
     path:     backend/section/saveImage
     defaults: { _controller: VorterixBackendBundle:Section:saveImage }
+    
+VorterixBackendBundle_section_saveImage:
+    path:     backend/section/saveImage
+    defaults: { _controller: VorterixBackendBundle:Section:saveImage }
+    
+VorterixBackendBundle_video_save:
+    path:     backend/video/save
+    defaults: { _controller: VorterixBackendBundle:Video:save }
+    
+VorterixBackendBundle_video_remove:
+    path:     backend/video/remove
+    defaults: { _controller: VorterixBackendBundle:Video:remove }
     

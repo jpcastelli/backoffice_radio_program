@@ -19,7 +19,7 @@ class UploaderController extends Controller
         
         $uploadedFile  = $request->files->get('the_file');
         $type          = $request->request->get('type');     
-        $path = $this->getPath($type);
+        $path          = $this->getPath($type);
    
         $fileExtension = strtolower($uploadedFile->guessExtension());
         $newFilename   = date('d-m-Y H.i.s').'.'.$fileExtension;
@@ -29,13 +29,13 @@ class UploaderController extends Controller
     }
     
     public function getPath($type){
-        
+ 
         switch($type){
             case 'post': 
                 $path = $this->getUploadsDir().'posts/cover/';
                 break;
             case 'gallery': 
-                $path = $this->getUploadsDir().'galleries/';
+                $path = $this->getUploadsDir().'temp/';
                 break;
             case 'category':
                 $path = $this->getUploadsDir().'categories/cover/';
@@ -43,15 +43,19 @@ class UploaderController extends Controller
             case 'section':
                 $path = $this->getUploadsDir().'section/cover/';
                 break;
+            case 'gallery_video_cover':
+                $path = $this->getUploadsDir().'video/cover/';
+                break;
         }
+        
         return $path;
     }
     
     public function removeImageAction(Request $request){
         $filename = $request->request->get('filename');
         $type     = $request->request->get('type');
-        $path     =  $this->getPath($type);
-        
+        $path     = $this->getPath($type);
+
         try{
         if(unlink($path.$filename))
            return new Response(Response::HTTP_OK);

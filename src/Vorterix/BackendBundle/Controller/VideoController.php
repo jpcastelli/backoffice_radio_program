@@ -48,20 +48,21 @@ class VideoController extends Controller
         return $response;
     }
     
-    public function removeCoverAction(Request $request){
-        $id       = $request->request->get('video_id');
+    public function removeAction(Request $request){
+        $id       = $request->request->get('elementID');
         $filename = $request->request->get('filename');
         $path     = $this->getPath();
         $em       = $this->getDoctrine()->getManager();
         $video    = $em->getRepository($this->repository)->find($id);
+        
         $em->remove($video);
         $em->flush();
         
         if(\file_exists($path.$filename))
             if(unlink($path.$filename))
                 return new Response(Response::HTTP_OK);
-            else
-                return new Response(Response::HTTP_NOT_FOUND);
+            
+        return new Response(Response::HTTP_NOT_FOUND);    
     }
 
             

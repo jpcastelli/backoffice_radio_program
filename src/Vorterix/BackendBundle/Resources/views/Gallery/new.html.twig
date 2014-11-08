@@ -5,13 +5,17 @@
     {{parent()}}
     <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/uploadify/uploadify.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/galleries.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/jquery-filetree/jqueryFileTree.css') }}" type="text/css" />
 {% endblock %}
 {% block javascripts %}
     {{parent()}}
     <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/uploadify/jquery.uploadify.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/vtx_main.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/jquery-filetree/jquery.easing.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/jquery-filetree/jqueryFileTree.js') }}"></script> 
     <script type="text/javascript">
     $(function(){
+        //Image gallery upload
         $('#file_upload').uploadify({
             'auto'        : false,
             'swf'         : '{{ asset('bundles/vorterixbackend/swf/uploadify.swf') }}',
@@ -20,37 +24,90 @@
             'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
             'multi'       : true,
             'buttonText' : 'Browse',
+            'formData'    : { 'type' : 'gallery' },
             'onUploadSuccess' : function(file, data,response) {
-                var imagesModuleActive = ($('.image-module').length == 0) ? 1 : $('.image-module').length+1;
-                $("#images-list").append('<div class="image-module"><img src="{{ asset('uploads/galleries/') }}' + data +'" width="100" />'+
+                $("#images-list").append('<div class="image-module">'+
+                                         '<a href="'+data+'" class="remove-element"></a>'+
+                                         '<img src="{{ asset('uploads/temp/') }}' + data +'" width="100" />'+
                                          '<input type="hidden" name="image-gallery[]" value="'+data+'" />' +
                                          '<textarea name="description-gallery[]" class="form-control" rows="3" placeholder="Descripcion"></textarea>'+
-                                         '<a href="'+data+'" class="remove-image">Eliminar</a></div>');
+                                         '</div>');
+            }
+        });
+    
+        //Cover Video Upload.
+        $('#file_upload_cover_video').uploadify({
+            'auto'        : false,
+            'swf'         : '{{ asset('bundles/vorterixbackend/swf/uploadify.swf') }}',
+            'uploader'    : '{{ url('VorterixBackendBundle_ajupload') }}',
+            'fileObjName' : 'the_file',
+            'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
+            'multi'       : true,
+            'buttonText'  : 'Browse',
+            'formData'    : { 'type' : 'gallery' },
+            'onUploadSuccess' : function(file, data,response) { 
+                    $("#uploaded-image").append('<a href="'+data+'" class="remove-video-cover">Eliminar</a>'+
+                                                '<img src="{{ asset('uploads/temp/') }}' + data +'" />'+
+                                                '<input type="hidden" id="chosen-cover" name="chosen-cover" value="'+data+'" />');
             },
-            'debug'       : false,
-            'formData' : { 'type' : 'gallery' }
+            'onUploadComplete': function(){
+                $('#video-upload-container').toggle();
+            }
         });
-
-        //Init Uploadify
-        $("#uploadImgs").click(function (e) { 
-            e.preventDefault(); 
-            $('#file_upload').uploadifyUpload();
-        });
-
-        //Executes an ajax for removing a file.
-        $("#images-list").on("click", ".remove-image", function(e){
+        
+        //Removes video cover before/after adding it to images list.
+        $("#uploaded-image").on("click", ".remove-video-cover", function(e){
             e.preventDefault();
-            var filename = $(this).attr('href'); 
-            removeSlow($(this).parent());
- 
+            var cover_name = $('#chosen-cover').val();
+
             $.ajax({
                 type: 'post',
-                url: '{{ url('VorterixBackendBundle_removeImageGallery') }}',
-                data: { 'filename': filename, 'type': 'gallery' },
-                success: function(result){   
+                url: '{{ url('VorterixBackendBundle_removeImage') }}',
+                data: { 'filename' : cover_name, 'type' : 'gallery' },
+                success: function(file, data,response){
+                    $("#uploaded-image").html('');
+                    $('#video-upload-container').toggle();
                 }
             });
         });
+        
+        //Removes video cover before/after adding it to images list.
+        $("#images-list").on("click", ".remove-element", function(e){
+            e.preventDefault();
+            var cover_name = $(this).attr('href');
+            removeSlow($(this).parents('.image-module'));
+            $.ajax({
+                type: 'post',
+                url: '{{ url('VorterixBackendBundle_removeImage') }}',
+                data: { 'filename' : cover_name, 'type' : 'gallery' },
+                success: function(file, data,response){          
+                        
+                }
+            });
+        });
+        
+        //Moves uploaded video cover & chosen video path to images list.
+        $("#add-video").click(function(e){
+            e.preventDefault();
+            var cover_name = $('#chosen-cover').val();
+            var video      = $('#post_video').val();
+            
+            $("#images-list").append('<div class="image-module">'+
+                                     '<a href="'+cover_name+'" class="remove-element"></a>'+
+                                     '<img src="{{ asset('uploads/temp/') }}' + cover_name +'" width="100" />'+
+                                     '<textarea name="description-video-gallery[]" class="form-control" rows="3" placeholder="Descripcion"></textarea>'+
+                                     '<input name="cover-video-gallery[]" type="hidden" value="'+cover_name+'" />'+
+                                     '<input name="name-video-gallery[]" class="form-control" type="text" readOnly value="'+video+'" />' +
+                                     '</div>');
+
+            $('#uploaded-image').html('');
+            $('#video-upload-container').toggle();
+        });
+        
+        
+        $('#file_tree').fileTree({ root: '/', script:'{{ url('VorterixBackendBundle_FileTree') }}' }, function(file) { 
+        $('#post_video').val(file)
+    });
     });
     </script>
 {% endblock %}
@@ -81,7 +138,7 @@
     <div class="col-md-8">
         <div class="box box-solid box-danger">
             <div class="box-header">
-                <h3 class="box-title">Seleccione las imagenes (Ctrl + click para seleccionar varias)</h3>
+                <h3 class="box-title">Agregar Imagenes (Ctrl + click para seleccionar varias)</h3>
             </div>
             <div class="box-body">
                 <div class="image-upload-container">
@@ -92,6 +149,37 @@
             </div>
         </div>
     </div>
+    
+    <div class="col-md-8">
+        <div class="box box-solid box-danger">
+            <div class="box-header">
+                <h3 class="box-title">Agregar Video</h3>
+            </div>
+            <div class="box-body">
+                <div class="alert alert-info alert-dismissable">
+                    <i class="fa fa-info"></i>
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <b>Atenci&oacute;n!</b> Para subir videos debe seleccionar una imagen a utilizar como cover.
+                </div>
+                <div class="form-group">
+                    <div id="video-upload-container">
+                        <div id="queue"></div>
+                        <input id="file_upload_cover_video" name="file_upload" type="file" multiple="true">
+                        <a href="javascript:$('#file_upload_cover_video').uploadify('upload','*')">Subir Archivos</a>
+                    </div>
+                </div>
+                <div id="uploaded-image"></div>
+                <div class="form-group">
+                    <label>Elija la ubicacion del video</label>
+                    <div id="file_tree" class="vtx_tree"></div>                         
+                    <br />
+                    <input type="text" class="form-control" placeholder="Post video" readonly="readonly" id="post_video" name="post_video"><br />
+                    <button id="add-video" class="btn btn-success">Agregar Video</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     
     <div class="col-md-8">
         <div class="box box-solid box-danger">

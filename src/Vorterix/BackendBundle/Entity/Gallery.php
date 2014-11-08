@@ -28,7 +28,12 @@ class Gallery
      */
     private $name;
     
-     /**
+    /**
+     * @ORM\OneToMany(targetEntity="Video", mappedBy="gallery", cascade={"persist"})
+     */
+    protected $videos;
+    
+    /**
      * @ORM\OneToMany(targetEntity="Image", mappedBy="gallery", cascade={"persist"})
      */
     protected $images;
@@ -107,4 +112,37 @@ class Gallery
         return $this->images;
     }
 
+
+    /**
+     * Add videos
+     *
+     * @param \Vorterix\BackendBundle\Entity\Video $videos
+     * @return Gallery
+     */
+    public function addVideo(\Vorterix\BackendBundle\Entity\Video $videos)
+    {
+        $this->videos[] = $videos;
+
+        return $this;
+    }
+
+    /**
+     * Remove videos
+     *
+     * @param \Vorterix\BackendBundle\Entity\Video $videos
+     */
+    public function removeVideo(\Vorterix\BackendBundle\Entity\Video $videos)
+    {
+        $this->videos->removeElement($videos);
+    }
+
+    /**
+     * Get videos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getVideos()
+    {
+        return $this->videos;
+    }
 }

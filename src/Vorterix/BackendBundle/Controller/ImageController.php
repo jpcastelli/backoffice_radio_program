@@ -10,28 +10,27 @@ class ImageController extends Controller
 {
     protected $repository = "VorterixBackendBundle:Image"; 
 
-    public function removeImageAction(Request $request){
-        $id        = $request->request->get('id');
+    public function removeAction(Request $request){
+        $id        = $request->request->get('elementID');
         $filename  = $request->request->get('filename');
         $type      = $request->request->get('type');
         $path      = $this->getPath($type);
-        
+        $error     = false;
         if($id){
-        $em    = $this->getDoctrine()->getEntityManager();
-        $image = $em->getRepository($this->repository)->find($id);
+            $em    = $this->getDoctrine()->getEntityManager();
+            $image = $em->getRepository($this->repository)->find($id);
 
-        $em->remove($image);
-        $em->flush();
+            $em->remove($image);
+            $em->flush();     
         }
         
         try{
-        if(unlink($path.$filename))
-           return new Response(Response::HTTP_OK);
-        else
-            return new Response(Response::HTTP_NOT_FOUND);
+           unlink($path.$filename);
         }  catch (\Exception $e){
-            return new Response(Response::HTTP_NOT_FOUND);
+            $error = true;
         }
+        
+        return ($error) ? new Response(Response::HTTP_OK) : new Response(Response::HTTP_NOT_FOUND);
     }
     
     public function getPath($type){

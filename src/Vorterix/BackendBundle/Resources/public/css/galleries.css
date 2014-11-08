@@ -3,23 +3,30 @@
     padding: 5px 0 5px 5px;
 }
 
-.image-module{
+.video-module, .image-module{
     position: relative;
     margin-top: 10px;
     border: 1px solid #F56954;
     padding: 10px;
 }
 
-.image-module img{
+.video-module img, .image-module img{
     float: left;
 }
 
-.image-module textarea{
-    width: 80%;
+.video-module textarea, .image-module textarea{
+    width: 75%;
     margin-left: 20px;
     display: inline;
 }
 
 #save-gallery{
     position: fixed;
+}
+
+a.remove-element{
+    background: url('../images/cancel.png') no-repeat;
+    width: 16px;
+    height: 16px;
+    float: right;
 }

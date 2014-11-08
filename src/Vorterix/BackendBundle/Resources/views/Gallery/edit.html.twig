@@ -5,52 +5,134 @@
     {{parent()}}
     <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/uploadify/uploadify.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/galleries.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/jquery-filetree/jqueryFileTree.css') }}" type="text/css" />
 {% endblock %}
 {% block javascripts %}
     {{parent()}}
     <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/uploadify/jquery.uploadify.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/vtx_main.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/jquery-filetree/jquery.easing.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/jquery-filetree/jqueryFileTree.js') }}"></script> 
     <script type="text/javascript">
-        $(function(){
-             $('#file_upload').uploadify({
-                'auto'        : false,
-                'swf'         : '{{ asset('bundles/vorterixbackend/swf/uploadify.swf') }}',
-                'uploader'    : '{{ url('VorterixBackendBundle_ajupload') }}',
-                'fileObjName' : 'the_file',
-                'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
-                'multi'       : true,
-                'buttonText' : 'Browse',
-                'onUploadSuccess' : function(file, data,response) {
-                    var imagesModuleActive = ($('.image-module').length == 0) ? 1 : $('.image-module').length+1;
-                    $("#images-list").append('<div class="image-module"><img src="{{ asset('uploads/galleries/') }}' + data +'" width="100" />'+
-                                             '<input type="hidden" name="image-gallery[]" value="'+data+'" />' +
-                                             '<textarea name="description-gallery[]" class="form-control" rows="3" placeholder="Descripcion"></textarea>'+
-                                             '<a href="'+data+'" class="remove-image">Eliminar</a></div>');
-                },
-                'debug'       : false,
-                'formData' : { 'type' : 'gallery' }
-            });
-
-            $("#uploadImgs").click(function (e) { 
-                e.preventDefault(); 
-                $('#file_upload').uploadifyUpload();
-            });
-                    
-        //Executes an ajax for removing a file.
-         $("#images-list").on("click", ".remove-image", function(e){
-             e.preventDefault();
-             var filename = $(this).attr('href');
-             var id       = $(this).attr('id');
-             removeSlow($(this).parent());
-             
-             $.ajax({
+    $(function(){
+        //Image gallery upload
+        $('#file_upload').uploadify({
+            'auto'        : false,
+            'swf'         : '{{ asset('bundles/vorterixbackend/swf/uploadify.swf') }}',
+            'uploader'    : '{{ url('VorterixBackendBundle_ajupload') }}',
+            'fileObjName' : 'the_file',
+            'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
+            'multi'       : true,
+            'buttonText' : 'Browse',
+            'formData'    : { 'type' : 'gallery' },
+            'onUploadSuccess' : function(file, data,response) {
+                $("#images-list").append('<div class="image-module">'+
+                                         '<a href="'+data+'" class="remove-element"></a>'+
+                                         '<img src="{{ asset('uploads/temp/') }}' + data +'" width="100" />'+
+                                         '<input type="hidden" name="image-gallery[]" value="'+data+'" />' +
+                                         '<textarea name="description-gallery[]" class="form-control" rows="3" placeholder="Descripcion"></textarea>'+
+                                         '</div>');
+            }
+        });
+    
+        //Cover Video Upload.
+        $('#file_upload_cover_video').uploadify({
+            'auto'        : false,
+            'swf'         : '{{ asset('bundles/vorterixbackend/swf/uploadify.swf') }}',
+            'uploader'    : '{{ url('VorterixBackendBundle_ajupload') }}',
+            'fileObjName' : 'the_file',
+            'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
+            'multi'       : true,
+            'buttonText' : 'Browse',
+            'formData'    : { 'type' : 'gallery' },
+            'onUploadSuccess' : function(file, data,response) { 
+                    $("#uploaded-image").append('<a href="'+data+'" class="remove-video-cover">Eliminar</a>'+
+                                                '<img src="{{ asset('uploads/temp/') }}' + data +'" />'+
+                                                '<input type="hidden" id="chosen-cover" name="chosen-cover" value="'+data+'" />');
+            },
+            'onUploadComplete': function(){
+                $('#video-upload-container').toggle();
+            }
+        });
+        
+        //Removes video cover before adding it to images list.
+        $("#uploaded-image").on("click", ".remove-video-cover", function(e){
+            e.preventDefault();
+            var cover_name = $('#chosen-cover').val();
+            removeSlow($(this).parents('.image-module'));
+            $.ajax({
                 type: 'post',
-                url: '{{ url('VorterixBackendBundle_removeImageGallery') }}',
-                data: { 'filename': filename, 'id': id, 'type': 'gallery' },
-                success: function(result){   
+                url: '{{ url('VorterixBackendBundle_removeImage') }}',
+                data: { 'filename' : cover_name, 'type' : 'gallery' },
+                success: function(file, data,response){
+                    $("#uploaded-image").html('');
+                    $('#video-upload-container').toggle();
                 }
             });
-         });
+        });
+        
+        //Removes video cover before/after adding it to images list.
+        $("#images-list").on("click", ".remove-element", function(e){
+            e.preventDefault();
+  
+            var filename   = $(this).attr('href');
+            var moduleType = $(this).parent().attr('class');
+            if(moduleType === 'video-module')
+                removeSlow($(this).parents('.video-module'));
+            
+            if(moduleType === 'image-module')
+                removeSlow($(this).parents('.image-module'));
+            
+            
+            var hasID = $(this).attr('id') !== undefined;
+            if(hasID){//Not a new element. Its an edition.
+                var elementID = $(this).attr('id');
+                removeGalleryElement(filename, elementID, moduleType);
+            }else{//New element.
+                $.ajax({
+                    type: 'post',
+                    url: '{{ url('VorterixBackendBundle_removeImage') }}',
+                    data: { 'filename' : filename, 'type' : 'gallery' },
+                    success: function(file, data,response){
+                    }
+                });
+            }
+        });
+        
+        function removeGalleryElement(filename, elementID, moduleType){
+        
+            var url = (moduleType === 'image-module') ? '{{ url('VorterixBackendBundle_image_remove') }}' : '{{ url('VorterixBackendBundle_video_remove') }}';
+        
+            $.ajax({
+                type: 'post',
+                url: url,
+                data: { 'filename' : filename, 'elementID' : elementID, 'type' : 'gallery' },
+                success: function(file, data,response){}
+            });
+        }
+        
+        //Moves uploaded video cover & chosen video path to images list.
+        $("#add-video").click(function(e){
+            e.preventDefault();
+            var cover_name = $('#chosen-cover').val();
+            var video      = $('#post_video').val();
+            
+            $("#images-list").append('<div class="video-module">'+
+                                     '<a href="'+cover_name+'" class="remove-element"></a>'+
+                                     '<img src="{{ asset('uploads/temp/') }}' + cover_name +'" width="100" />'+
+                                     '<textarea name="description-video-gallery[]" class="form-control" rows="3" placeholder="Descripcion"></textarea>'+
+                                     '<input name="cover-video-gallery[]" type="hidden" value="'+cover_name+'" />'+
+                                     '<input name="name-video-gallery[]" class="form-control" type="text" readOnly value="'+video+'" />' +
+                                     '</div>');
+
+            $('#uploaded-image').html('');
+            $('#video-upload-container').toggle();
+        });
+        
+        $('#file_tree').fileTree({ root: '/', script:'{{ url('VorterixBackendBundle_FileTree') }}' }, function(file) { 
+            $('#post_video').val(file)
+        });
+
     });
     </script>
 {% endblock %}
@@ -81,7 +163,7 @@
     <div class="col-md-8">
         <div class="box box-solid box-danger">
             <div class="box-header">
-                <h3 class="box-title">Seleccione las imagenes (Ctrl + click para seleccionar varias)</h3>
+                <h3 class="box-title">Agregar Imagenes (Ctrl + click para seleccionar varias)</h3>
             </div>
             <div class="box-body">
                 <div class="image-upload-container">
@@ -96,17 +178,62 @@
     <div class="col-md-8">
         <div class="box box-solid box-danger">
             <div class="box-header">
+                <h3 class="box-title">Agregar Video</h3>
+            </div>
+            <div class="box-body">
+                <div class="alert alert-info alert-dismissable">
+                    <i class="fa fa-info"></i>
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <b>Atenci&oacute;n!</b> Para subir videos debe seleccionar una imagen a utilizar como cover.
+                </div>
+                <div class="form-group">
+                    <div id="video-upload-container">
+                        <div id="queue"></div>
+                        <input id="file_upload_cover_video" name="file_upload" type="file" multiple="true">
+                        <a href="javascript:$('#file_upload_cover_video').uploadify('upload','*')">Subir Archivos</a>
+                    </div>
+                </div>
+                <div id="uploaded-image"></div>
+                <div class="form-group">
+                    <label>Elija la ubicacion del video</label>
+                    <div id="file_tree" class="vtx_tree"></div>                         
+                    <br />
+                    <input type="text" class="form-control" placeholder="Post video" readonly="readonly" id="post_video" name="post_video"><br />
+                    <button id="add-video" class="btn btn-success">Agregar Video</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="col-md-8">
+        <div class="box box-solid box-danger">
+            <div class="box-header">
                 <h3 class="box-title">Agregue una descripcion a cada imagen</h3>
             </div>
             <div id="images-list" class="box-body">
+                
+                
                 {% for image in images %}
                 <div class="image-module">
+                    <a href="{{ image.name }}" id="{{ image.id }}" class="remove-element"></a>
                     <img src="{{ asset("uploads/galleries/") }}{{ image.name }}" width="100" />
                     <input type="hidden" name="image-gallery[]" value="{{ image.name }}" />
+                    <input type="hidden" name="image-gallery-id[]" value="{{ image.id }}" />
                     <textarea name="description-gallery[]" class="form-control" rows="3" placeholder="Descripcion">{{ image.description }}</textarea>
-                    <a href="{{ image.name }}" id="{{ image.id }}" class="remove-image">Eliminar</a>
                 </div>
             {% endfor %}
+            
+            {% for video in videos %}
+                <div class="video-module">
+                    <a href="{{ video.cover }}" id="{{ video.id }}" class="remove-element"></a>
+                    <img src="{{ asset("uploads/video/cover/") }}{{ video.cover }}" width="100" />
+                    <textarea name="description-video-gallery[]" class="form-control" rows="3" placeholder="Descripcion">{{ video.description }}</textarea>
+                    <input name="cover-video-gallery[]" type="hidden" value="{{ video.cover }}" />
+                    <input type="hidden" name="video-gallery-id[]" value="{{ video.id }}" />
+                    <input name="name-video-gallery[]" class="form-control" type="text" readOnly value="{{ video.name }}" />
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
