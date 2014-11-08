@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 class JsonController extends Controller
 {
     protected $maxPostsBlock = 7;
+    protected $totalPosts    = 28;
    
     public function indexAction()
     {
@@ -16,23 +17,29 @@ class JsonController extends Controller
     
     public function generateAction(Request $request){
         
-        $category = $request->request->get('post_category');     
+        $category          = $request->request->get('post_category'); 
+        $opinionID         = $this->getCategoryIDByName('Opinion');
+        $carteleraID       = $this->getCategoryIDByName('Cartelera');
+        $excludeCategories = array($opinionID, $carteleraID);
+        
+        
         if($category == '0'){//Category HOME
-            $posts = $this->getAllPosts();
+            $posts = $this->getAllPosts($excludeCategories, 1, $this->totalPosts);
         }
         else{
-            $posts = $this->getPostsByCategory($category);  
+            $posts = $this->getPostsByCategory($category, 1, $this->totalPosts);  
         }
-        
-        $postsOpinion   = $this->getPostsByCategory(26); 
-        $postsCartelera = $this->getPostsByCategory(25); 
+ 
+        $postsOpinion   = $this->getPostsByCategory($opinionID);
+        $postsCartelera = $this->getPostsByCategory($carteleraID); 
         $notasxbloque   = $this->getNotasxBloque();
-        
+
         $postsBlock = 1;
         $postCount = 1;
         $postxblock = array();
         
         foreach($posts as $post){
+
             if($postsBlock <= $this->maxPostsBlock){
                 if($postCount <= $notasxbloque[$postsBlock]){
                     $postxblock["notasbloque$postsBlock"][] = $post;
@@ -59,7 +66,8 @@ class JsonController extends Controller
                     'notasbloqueleidas' => $this->getNotasBloqueLeidas(),
                     'videosmasvistos'   => $this->getVideosMasVistos(),
                     'postsCartelera'    => $postsCartelera,
-                    'postsOpinion'      => $postsOpinion
+                    'postsOpinion'      => $postsOpinion,
+                    'secciones'         => $this->getSections()
                 )
             );
  
@@ -102,6 +110,39 @@ class JsonController extends Controller
         
         return $path;
     }
+    
+    private function getJsonName($category){
+
+        $file = '';
+        switch ($category){
+            case 0: 
+                  $file = 'home.json';
+                  break;
+            case 1: 
+                $file = 'tmn.json';
+                break;
+            case 3: 
+                $file = 'acido.json';
+                break;
+            case 6: 
+                $file = 'delicias.json';
+                break;
+            case 13: 
+                $file = 'grupo_muerte.json';
+                break;
+            case 19: 
+                $file = 'newsterix.json';
+            break;
+            case 20: 
+                $file = 'guetap.json';
+                break;
+            case 21: 
+                $file = 'malditos_nerds.json';
+                break;
+        }
+
+        return $file;
+    }
         
     private function getSettings(){
         $arrmsj = Array();
@@ -129,32 +170,26 @@ class JsonController extends Controller
 
     
     private function getNotasxProg(){
+         
+        $em         = $this->getDoctrine()->getManager();
+        $categories = $em->getRepository('VorterixBackendBundle:Category')->findAll();
+        $index      = 0;
+        $programas  = array();
+
+        foreach($categories as $category){
+            $name = $category->getName();
+            if($name != 'Opinion' && $name != 'Cartelera'){
+                $programas[$index]['id']          = $category->getId();
+                $programas[$index]['programa']    = $category->getName();
+                $programas[$index]['jsname']      = $this->getJsonName($category->getId());
+                $programas[$index]['cover']       = $category->getCover();
+                $programas[$index]['description'] = $category->getDescription();
+                $programas[$index]['notas']       = $this->getPostsByCategory($category->getId(), 1, 5);
+                $index++;
+            }
+        }
         
-        $notas1 = Array('id'=>"1","titulo"=>"nombre nota 1","copete"=>"copete nota 1","thumb" => "thumbn1.png" );
-        $notas2 = Array('id'=>"2","titulo"=>"nombre nota 2","copete"=>"copete nota 2","thumb" => "thumbn2.png" );
-        $notas3 = Array('id'=>"3","titulo"=>"nombre nota 3","copete"=>"copete nota 3","thumb" => "thumbn3.png" );
-
-        $notasp1[] = $notas1;
-        $notasp1[] = $notas2;
-        $notasp1[] = $notas3;
-
-        $notasp2[] = $notas1;
-        $notasp2[] = $notas2;
-        $notasp2[] = $notas3;
-
-        $notasp3[] = $notas1;
-        $notasp3[] = $notas2;
-        $notasp3[] = $notas3;
-        $programa1 = Array('programa'=>"Guetap","jsname"=>"guetap","id" => "1","logo"=>"guetap.jpg","info"=>"lunes a viernes de 9 a 13js.<br />Mario Pergolini<br />marcelo gatman<br />vanina parejas.","notas"=>$notasp1 );
-        $programa2 = Array('programa'=>"Acido","jsname"=>"acido","id" => "2","logo"=>"guetap.jpg","info"=>"lunes a viernes de 9 a 13js.<br />Mario Pergolini<br />marcelo gatman<br />vanina parejas.","notas"=>$notasp2 );
-        $programa3 = Array('programa'=>"Newsterix","jsname"=>"newsterix","id" => "3","logo"=>"guetap.jpg","info"=>"lunes a viernes de 9 a 13js.<br />Mario Pergolini<br />marcelo gatman<br />vanina parejas.","notas"=>$notasp3 );
-
-        $losprog = Array();
-        $losprog[] = $programa1;
-        $losprog[] = $programa2;
-        $losprog[] = $programa3;
-        
-        return $losprog;
+        return $programas;
     }
     
     private function getUltimaNota(){
@@ -235,19 +270,27 @@ class JsonController extends Controller
         return $notasxbloque;
     }
     
-    private function getAllPosts(){
+    private function getAllPosts($excludeCategories, $offset = 1, $limit = null){ 
+        
+        $excluded = implode(',', $excludeCategories);
+ 
         $em   = $this->getDoctrine()->getManager();
         $posts  = $em
                 ->createQueryBuilder()
                 ->select('q.id,q.pretitle, q.title, q.shortDescription, q.description, q.cover, q.status, q.createD, q.comments')
                 ->from('VorterixBackendBundle:Post', 'q')
                 ->orderBy('q.publishD', 'DESC')
+                ->where('q.status=true' )
+                ->where("q.category not in ($excluded)")
+                ->setFirstResult( $offset )
+                ->setMaxResults( $limit )
                 ->getQuery()
                 ->getResult();
         return $posts;
     }
     
-    private function getPostsByCategory($category){
+    private function getPostsByCategory($category, $offset = 0, $limit = null){
+        
         $em   = $this->getDoctrine()->getManager();
         $posts  = $em
                 ->createQueryBuilder()
@@ -256,13 +299,40 @@ class JsonController extends Controller
                 ->where('q.category = :id')
                 ->setParameter('id', $category)
                  ->orderBy('q.publishD', 'DESC')
+                ->setFirstResult( $offset )
+                ->setMaxResults( $limit )
                 ->getQuery()
                 ->getResult();
+        
         return $posts;
     }
     
     private function getPostsCartelera(){
         
+    }
+    
+    private function getSections(){
+        
+        $em       = $this->getDoctrine()->getManager();
+        $sections = $em->getRepository('VorterixBackendBundle:Section')->findAll();
+        $arrSections = Array();
+        $counter = 0;
+        foreach($sections as $section){
+            $arrSections[$counter]['id']          = $section->getId();
+            $arrSections[$counter]['name']        = $section->getName();
+            $arrSections[$counter]['description'] = $section->getDescription();
+            $arrSections[$counter]['cover']       = $section->getCover();
+            
+            $counter++;
+        }
+        return $arrSections;
+    }
+    
+    private function getCategoryIDByName($categoryName){
+        $em       = $this->getDoctrine()->getManager();
+        $category = $em->getRepository('VorterixBackendBundle:Category')->findOneByName($categoryName);
+
+        return $category->getId();
     }
     
     
