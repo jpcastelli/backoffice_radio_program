@@ -192,20 +192,41 @@ class JsonController extends Controller
         return $programas;
     }
     
-    private function getUltimaNota(){
-        return $ultimanota = Array('id'=>"39393","titulo"=>"titulo de la ultima nota","copete"=>"copete ultima nota","thumb" => "elthumbultima.png" );
+    private function getUltimaNota(){ 
+        
+         $em   = $this->getDoctrine()->getManager();
+        $posts  = $em
+                ->createQueryBuilder()
+                ->select('q.id,q.pretitle, q.title, q.shortDescription, q.description, q.cover, q.status, q.createD, q.comments')
+                ->from('VorterixBackendBundle:Post', 'q')
+                ->orderBy('q.publishD', 'DESC')
+                ->where('q.status=true' )
+                ->setFirstResult( 1 )
+                ->setMaxResults( 1 )
+                ->getQuery()
+                ->getResult();
+        
+        return $posts;
     }
     
     private function getNotaDestacada(){
-        $notas1 = Array('id'=>"1","titulo"=>"nombre nota 1","copete"=>"copete nota 1","thumb" => "thumbn1.png" );
-        $notas2 = Array('id'=>"2","titulo"=>"nombre nota 2","copete"=>"copete nota 2","thumb" => "thumbn2.png" );
-        $notas3 = Array('id'=>"3","titulo"=>"nombre nota 3","copete"=>"copete nota 3","thumb" => "thumbn3.png" );
-        $ntsd = Array();
-        $ntsd[] = $notas1;
-        $ntsd[] = $notas2;
-        $ntsd[] = $notas3;
-
-        return $ntsd;
+        
+        $em            = $this->getDoctrine()->getManager();
+        $highlights    = $em->getRepository('VorterixBackendBundle:Highlight')->findAll();
+        $arrHighlights = Array();
+        $counter       = 0;
+        
+        foreach($highlights as $highlight){
+            $arrHighlights[$counter]['id']            = $highlight->getId();
+            $arrHighlights[$counter]['titulo']        = $highlight->getTitle();
+            $arrHighlights[$counter]['link']          = $highlight->getLink();
+            $arrHighlights[$counter]['columnas']      = $highlight->getColumns();
+            $arrHighlights[$counter]['imagen_chica']  = $highlight->getLittleImage();
+            $arrHighlights[$counter]['imagen_grande'] = $highlight->getBigImage();
+     
+            $counter++;
+        }
+        return $arrHighlights;
     }
     
     private function getVideosMasVistos(){
@@ -305,10 +326,6 @@ class JsonController extends Controller
                 ->getResult();
         
         return $posts;
-    }
-    
-    private function getPostsCartelera(){
-        
     }
     
     private function getSections(){
