@@ -143,3 +143,27 @@ VorterixBackendBundle_video_remove:
     path:     backend/video/remove
     defaults: { _controller: VorterixBackendBundle:Video:remove }
     
+VorterixBackendBundle_highlight:
+    path:     backend/destacado
+    defaults: { _controller: VorterixBackendBundle:Highlight:index }
+    
+VorterixBackendBundle_highlight_new:
+    path:     backend/destacado/new
+    defaults: { _controller: VorterixBackendBundle:Highlight:new }
+    
+VorterixBackendBundle_highlight_edit:
+    path:     backend/destacado/edit/{id}
+    defaults: { _controller: VorterixBackendBundle:Highlight:edit, id : null }
+    
+VorterixBackendBundle_highlight_save:
+    path:     backend/destacado/save
+    defaults: { _controller: VorterixBackendBundle:Highlight:save }
+    
+VorterixBackendBundle_highlight_delete:
+    path:     backend/destacado/delete/{id}
+    defaults: { _controller: VorterixBackendBundle:Highlight:delete, id: null }
+    
+VorterixBackendBundle_highlight_removeFile:
+    path:     backend/destacado/removeFile/{type}/{filename}
+    defaults: { _controller: VorterixBackendBundle:Highlight:removeFile, filename: null, type: null }
+    

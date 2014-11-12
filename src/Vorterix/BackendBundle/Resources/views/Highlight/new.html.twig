@@ -1,0 +1,160 @@
+{% extends 'VorterixBackendBundle::layout.html.twig' %}
+{% block title %}Vorterix :: Destacado{% endblock %}
+{% block section_title %}Vorterix :: Destacado{% endblock %}
+{% block stylesheets %}
+    {{parent()}}
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/uploadify/uploadify.css') }}" type="text/css" />
+{% endblock %}
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/uploadify/jquery.uploadify.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/vtx_main.js') }}"></script>
+    <script type="text/javascript">
+    $(function(){
+        //Image gallery upload
+        $('#file_upload_lt_image').uploadify({
+            
+ 
+            'auto'        : false,
+            'swf'         : '{{ asset('bundles/vorterixbackend/swf/uploadify.swf') }}',
+            'uploader'    : '{{ url('VorterixBackendBundle_ajupload') }}',
+            'fileObjName' : 'the_file',
+            'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
+            'multi'       : true,
+            'buttonText' : 'Browse',
+            'formData'    : { 'type' : 'temp' },
+            'onUploadSuccess' : function(file, data,response) {
+                $("#uploaded-lt").append('<a class="remove-element" href="'+data+'">Eliminar y Cambiar</a>'+
+                                          '<img src="{{ asset('uploads/temp/') }}'+data +'"/>'+
+                                          '<input type="hidden" name="little_image" value="'+data+'" />');
+            },
+            onUploadComplete: function(){
+                $('#image-upload-container_lt').toggle();
+            }
+        });
+        
+        $('#file_upload_bg_image').uploadify({
+            
+ 
+            'auto'        : false,
+            'swf'         : '{{ asset('bundles/vorterixbackend/swf/uploadify.swf') }}',
+            'uploader'    : '{{ url('VorterixBackendBundle_ajupload') }}',
+            'fileObjName' : 'the_file',
+            'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
+            'multi'       : true,
+            'buttonText' : 'Browse',
+            'formData'    : { 'type' : 'temp' },
+            'onUploadSuccess' : function(file, data,response) {
+                    $("#uploaded-bg").append('<a class="remove-element" href="'+data+'">Eliminar y Cambiar</a>'+
+                                              '<img src="{{ asset('uploads/temp/') }}'+data +'"/>'+
+                                              '<input type="hidden" name="big_image" value="'+data+'" />'
+                                                );
+            },
+            onUploadComplete: function(){
+                $('#image-upload-container_bg').toggle();
+            }
+        });
+        
+        //Removes video cover before/after adding it to images list.
+        $("#uploaded-bg, #uploaded-lt").on("click", ".remove-element", function(e){
+        
+            var imageModuleName = $(this).parent().attr('id');
+            if(imageModuleName === 'uploaded-lt'){
+                $('#image-upload-container_lt').toggle();
+                $('#uploaded-lt').html('');
+            }
+                
+            if(imageModuleName === 'uploaded-bg'){
+                $('#image-upload-container_bg').toggle();
+                $('#uploaded-bg').html('');
+            }
+            
+            e.preventDefault();
+            var filename = $(this).attr('href');
+  
+            $.ajax({
+                type: 'post',
+                url: '{{ url('VorterixBackendBundle_removeImage') }}',
+                data: { 'filename' : filename, 'type' : 'temp' },
+                success: function(file, data,response){          
+                        
+                }
+            });
+        });
+    });
+    </script>
+{% endblock %}
+{% block content %}
+    <form name="post_creation" action="{{ url('VorterixBackendBundle_highlight_save') }}" method="post">
+    <div class="col-md-8">
+        <div class="box box-solid box-danger">
+            <div class="box-header">
+                <h3 class="box-title">Destacado</h3>
+            </div>
+            <div class="box-body">
+                <input type="text" name="title" id="title" class="form-control input-lg" placeholder="Titulo" /><br />
+                <input type="text" name="link" id="link" class="form-control input-lg" placeholder="http://" /><br />
+                <div class="form-group">                  
+                    <label class="">
+                        <div class="iradio_minimal-red" aria-checked="false" aria-disabled="false" style="position: relative;">
+                            <input type="radio" name="columns" value="1" class="minimal-red" style="position: absolute; opacity: 0;">
+                            <ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins>
+                        </div>
+                        Destacado 1 columna
+                    </label><br />
+                    <label>
+                        <div class="iradio_minimal-red" aria-checked="false" aria-disabled="true" style="position: relative;">
+                            <input type="radio" name="columns" value="2" class="minimal-red" style="position: absolute; opacity: 0;">
+                            <ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins>
+                        </div>
+                        Destacado 2 columnas
+                    </label>
+                </div>
+            </div>
+         
+        </div>
+    </div>
+    
+     <div class="col-md-4">
+        <div id="save-gallery" class="box box-solid box-danger">
+            <div class="box-header"></div>
+            <div id="control-buttons" class="box-body">
+                <div class="form-group">
+                    <button class="btn btn-success btn-lg">Guardar Destacado</button>
+                </div>
+            </div>
+        </div>  
+    </div>
+    
+    <div class="col-md-8">
+        <div class="box box-solid box-danger">
+            <div class="box-header">
+                <h3 class="box-title">Agregar Imagen Peque&ntilde;a</h3>
+            </div>
+            <div class="box-body">
+                <div id="image-upload-container_lt">
+                    <div id="queue"></div>
+                    <input id="file_upload_lt_image" name="file_upload" type="file" multiple="true">
+                    <a href="javascript:$('#file_upload_lt_image').uploadify('upload','*')">Subir Imagen</a>  
+                </div>
+                <div id="uploaded-lt"  style="text-align: center;"></div>
+            </div>
+        </div>
+        
+        <div class="box box-solid box-danger">
+            <div class="box-header">
+                <h3 class="box-title">Agregar Imagen Grande</h3>
+            </div>
+            <div class="box-body">
+                <div id="image-upload-container_bg">
+                    <div id="queue"></div>
+                    <input id="file_upload_bg_image" name="file_upload" type="file" multiple="true">
+                    <a href="javascript:$('#file_upload_bg_image').uploadify('upload','*')">Subir Imagen</a>
+                </div>
+                <div id="uploaded-bg"  style="text-align: center;"></div>
+            </div>
+        </div>
+    </div>
+   
+</form>
+{% endblock %}

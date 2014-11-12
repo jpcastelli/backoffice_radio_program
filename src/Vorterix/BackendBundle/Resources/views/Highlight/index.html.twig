@@ -1,0 +1,50 @@
+{% extends 'VorterixBackendBundle::layout.html.twig' %}
+{% block title %}Vorterix :: Destacados{% endblock %}
+{% block section_title %}Vorterix :: Destacados{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Listado de Destacados</h3>
+                <div class="box-tools">
+                    <div class="input-group">                   
+                        <div class="input-group-btn">
+                            <a href="{{ url('VorterixBackendBundle_highlight_new') }}" class="btn btn-warning pull-right">Agregar Destacado</a>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-hover">
+                    <tr>
+                        <th>ID</th>
+                        <td></td>
+                        <th>Titulo</th>
+                        <td></td>
+                    </tr>
+                    {% for highlight in highlights %}
+                    <tr>
+                        <td>{{ highlight.id }}</td>
+                        <td></td>
+                        <td>{{ highlight.title }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default">Action</button>
+                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ url('VorterixBackendBundle_highlight_edit') }}/{{ highlight.id }}">Editar</a></li>
+                                    <li><a href="{{ url('VorterixBackendBundle_highlight_delete') }}/{{ highlight.id }}">Eliminar</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div><!-- /.box-body -->
+        </div><!-- /.box -->
+    </div>
+{% endblock %}
