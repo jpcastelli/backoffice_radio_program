@@ -46,6 +46,9 @@ class UploaderController extends Controller
             case 'gallery_video_cover':
                 $path = $this->getUploadsDir().'video/cover/';
                 break;
+            case 'temp':
+                $path = $this->getUploadsDir().'temp/';
+                break;
         }
         
         return $path;
