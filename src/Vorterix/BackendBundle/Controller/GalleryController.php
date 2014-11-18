@@ -132,7 +132,7 @@ class GalleryController extends Controller
      private function getAllGalleries(){
         $galleries = $this->getDoctrine()
                      ->getRepository($this->repository)
-                     ->findAll();
+                     ->findBy(array(), array('id' => 'DESC'));
         
         return $galleries;
     }
