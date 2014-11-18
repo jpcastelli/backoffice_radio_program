@@ -253,6 +253,20 @@
         showInputs: false
     });
     
+    $('input[name=post_type]').click(function(){
+       var type = $(this).val();
+       
+       if(type === 'category'){
+           $('#categoryList').removeClass('hidden');
+           if(!$('#sectionList').hasClass('hidden'))
+               $('#sectionList').addClass('hidden');
+       }else{
+           $('#sectionList').removeClass('hidden');
+           if(!$('#categoryList').hasClass('hidden'))
+               $('#categoryList').addClass('hidden');
+       }
+   });
+    
     toggleCrop();
 });
     </script>
@@ -339,13 +353,35 @@
             <div class="box box-success">
                 <div class="box-header"></div>
                 <div class="box-body">
+                    
+                    <div class="form-group" style="text-align: center;">                  
+                        <label>Programa
+                            <input type="radio" name="post_type" value="category" class="minimal-red" {% if post.category %}checked{% endif %}/>
+                        </label>&nbsp;&nbsp;&nbsp;
+                        <label>Seccion
+                            <input type="radio" name="post_type" value="section" class="minimal-red" {% if post.section %}checked{% endif %}/>
+                        </label>
+                    </div>
 
+                    
+                    
                     <div class="form-group">
-                        {% if post.category %}
-                            {% render url('VorterixBackendBundle_category_list', {'id': post.category.id }) %}
-                        {% else %}
-                            {% render url('VorterixBackendBundle_category_list') %}
-                        {% endif %}
+                        <div id="categoryList" class="form-group {% if post.section %}hidden{% endif %}">
+                            {% if post.category %}
+                                {% render url('VorterixBackendBundle_category_list', {'id': post.category.id }) %}
+                            {% else %}
+                                {% render url('VorterixBackendBundle_category_list') %}
+                            {% endif %}
+                        </div>
+                        
+                        <div id="sectionList" class="form-group {% if post.category %}hidden{% endif %}">
+                            {% if post.section %}
+                                {% render url('VorterixBackendBundle_section_list', {'id': post.section.id }) %}
+                            {% else %}
+                                {% render url('VorterixBackendBundle_section_list') %}
+                            {% endif %}
+                        </div>
+                    
                     </div>
                     <div class="form-group">
                         <label>Etiquetas (XXXX + Enter)</label>

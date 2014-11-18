@@ -69,6 +69,11 @@ class Post
     private $category;
     
     /**
+     * @ORM\ManyToOne(targetEntity="Section")
+     */
+    private $section;
+    
+    /**
      * @ORM\ManyToMany(targetEntity="Tag")
      * @ORM\JoinTable(name="posts_tags")
      */
@@ -444,5 +449,28 @@ class Post
     public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * Set section
+     *
+     * @param \Vorterix\BackendBundle\Entity\Section $section
+     * @return Post
+     */
+    public function setSection(\Vorterix\BackendBundle\Entity\Section $section = null)
+    {
+        $this->section = $section;
+
+        return $this;
+    }
+
+    /**
+     * Get section
+     *
+     * @return \Vorterix\BackendBundle\Entity\Section 
+     */
+    public function getSection()
+    {
+        return $this->section;
     }
 }

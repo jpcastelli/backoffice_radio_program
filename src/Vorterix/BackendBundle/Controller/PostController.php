@@ -49,7 +49,9 @@ class PostController extends Controller
         $pretitle      = $request->request->get('post_pretitle');
         $shortDescription = $request->request->get('post_short_description');
         $description   = $request->request->get('post_description');
-        $category_id   = $request->request->get('post_category');  
+        $post_type     = $request->request->get('post_type');
+        $category_id   = ($post_type == "category") ? $request->request->get('post_category') : null;
+        $section_id    = ($post_type == "section")  ? $request->request->get('post_section')  : null;
         $tags          = $request->request->get('tags');
         $galleries     = $request->request->get('post_galleries');
         $cover         = $request->request->get('post_cover');
@@ -61,7 +63,8 @@ class PostController extends Controller
         $post_status   = ($request->request->get('post_status') != 'draft') ? true : false;
 
         //Get Category entity object
-        $category = $em->getRepository('VorterixBackendBundle:Category')->find($category_id);
+        $category = ($category_id != null || $category_id != '') ? $em->getRepository('VorterixBackendBundle:Category')->find($category_id) : null;
+        $section  = ($section_id != null  || $section_id  != '') ? $em->getRepository('VorterixBackendBundle:Section')->find($section_id)   : null;
         
         //Save tags array
         $this->saveTags($tags);
@@ -72,6 +75,7 @@ class PostController extends Controller
         $post->setDescription($description);
         $post->setShortDescription($shortDescription);
         $post->setCategory($category);
+        $post->setSection($section);
         $this->setPostGalleries($post, $galleries);
         $post->setStatus($post_status);
         $post->setCover($cover);
@@ -148,7 +152,7 @@ class PostController extends Controller
     private function getAllPosts(){
         $posts = $this->getDoctrine()
                      ->getRepository($this->repository)
-                     ->findAll();
+                     ->findBy(array(), array( 'createD' => 'DESC' ));
         
         return $posts;
     }
