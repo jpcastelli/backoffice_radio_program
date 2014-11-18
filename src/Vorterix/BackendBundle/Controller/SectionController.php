@@ -97,7 +97,7 @@ class SectionController extends Controller
     
     public function listAction($id){
         $categories = $this->getAllSections();
-        return $this->render('VorterixBackendBundle:Section:section_list.html.twig', array('categories'=>$categories,'selected_id' => $id));
+        return $this->render('VorterixBackendBundle:Section:list.html.twig', array('categories'=>$categories,'selected_id' => $id));
     }
 
     public function removeImageAction(Request $request){
