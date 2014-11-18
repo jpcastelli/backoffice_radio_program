@@ -167,3 +167,7 @@ VorterixBackendBundle_highlight_removeFile:
     path:     backend/destacado/removeFile/{type}/{filename}
     defaults: { _controller: VorterixBackendBundle:Highlight:removeFile, filename: null, type: null }
     
+VorterixBackendBundle_highlight_columnChange:
+    path:     backend/destacado/columnChange
+    defaults: { _controller: VorterixBackendBundle:Highlight:columnChange }
+    
