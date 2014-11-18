@@ -17,10 +17,9 @@
             <div class="box-header">
                 <h3 class="box-title">Listado de Categorias</h3>
                 <div class="box-tools">
-                    <div class="input-group">
-                        <input type="text" name="table_search" class="form-control input-sm pull-right" style="width: 150px;" placeholder="Search"/>
+                    <div class="input-group">                   
                         <div class="input-group-btn">
-                            <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+                            <a href="{{ url('VorterixBackendBundle_category_new') }}" class="btn btn-warning pull-right">Agregar Programa</a>
                         </div>
                     </div>
                 </div>
@@ -31,11 +30,12 @@
                         <th>ID</th>
                         <td></td>
                         <th>Categoria</th>
+                        <td></td>
                     </tr>
                     {% for category in categories %}
                     <tr>
                         <td>{{ category.id }}</td>
-                        <td>{% if category.cover %}<img src="/uploads/categories/cover/{{ category.cover }}" width="70" height="70" />{% endif %}
+                        <td>{% if category.cover %}<img src="{{asset('uploads/categories/cover/') }}{{ category.cover }}" width="70" height="70" />{% endif %}
                         <td>{{ category.name }}</td>
                         <td>
                             <div class="btn-group">

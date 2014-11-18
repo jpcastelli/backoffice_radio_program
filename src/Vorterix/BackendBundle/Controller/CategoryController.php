@@ -96,7 +96,7 @@ class CategoryController extends Controller
     
     public function listAction($id){
         $categories = $this->getAllCategories();
-        return $this->render('VorterixBackendBundle:Category:category_list.html.twig', array('categories'=>$categories,'selected_id' => $id));
+        return $this->render('VorterixBackendBundle:Category:list.html.twig', array('categories'=>$categories,'selected_id' => $id));
     }
 
 }
