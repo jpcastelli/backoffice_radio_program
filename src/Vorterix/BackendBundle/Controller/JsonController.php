@@ -67,7 +67,8 @@ class JsonController extends Controller
                     'videosmasvistos'   => $this->getVideosMasVistos(),
                     'postsCartelera'    => $postsCartelera,
                     'postsOpinion'      => $postsOpinion,
-                    'secciones'         => $this->getSections()
+                    'secciones'         => $this->getSections(),
+                    'numColumnasDestacado' => $this->getNumeroColumnasDestacado()
                 )
             );
  
@@ -197,8 +198,9 @@ class JsonController extends Controller
          $em   = $this->getDoctrine()->getManager();
         $posts  = $em
                 ->createQueryBuilder()
-                ->select('q.id,q.pretitle, q.title, q.shortDescription, q.description, q.cover, q.status, q.createD, q.comments')
+                ->select('c.name as programa, q.id,q.pretitle, q.title, q.shortDescription, q.description, q.cover, q.status, q.createD, q.comments')
                 ->from('VorterixBackendBundle:Post', 'q')
+                ->innerJoin('VorterixBackendBundle:Category', 'c')
                 ->orderBy('q.publishD', 'DESC')
                 ->where('q.status=true' )
                 ->setFirstResult( 1 )
@@ -227,6 +229,13 @@ class JsonController extends Controller
             $counter++;
         }
         return $arrHighlights;
+    }
+    
+    private function getNumeroColumnasDestacado(){
+        $em   = $this->getDoctrine()->getManager();
+        $key  = $em->getRepository("VorterixBackendBundle:Settings")->findBy(array("keySetting" => "DESTACADO_COLUMNAS"));
+ 
+        return $key[0]->getValueSetting();
     }
     
     private function getVideosMasVistos(){
