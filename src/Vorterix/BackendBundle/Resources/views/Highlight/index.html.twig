@@ -1,12 +1,39 @@
 {% extends 'VorterixBackendBundle::layout.html.twig' %}
 {% block title %}Vorterix :: Destacados{% endblock %}
 {% block section_title %}Vorterix :: Destacados{% endblock %}
+{% block javascripts %}
+{{parent()}}
+<script type="text/javascript">
+$(function() {
+      $("#columnNumber").change(function(){
+        var number = $(this).val();
+        var columnSettingID = $('#columnSettingID').val();
+        $.ajax({
+            type: 'post',
+            url: '{{ url('VorterixBackendBundle_highlight_columnChange') }}',
+            data: { 'columns': number, id: columnSettingID },
+            success: function(data){
+                $('#columnSettingID').val(data);
+            }
+        });
+     });
+
+});
+</script>
+{% endblock %}
 {% block content %}
 <div class="row">
     <div class="col-xs-12">
         <div class="box">
             <div class="box-header">
                 <h3 class="box-title">Listado de Destacados</h3>
+    
+                <select style="float: left; width: 17%; margin-top: 5px;" id="columnNumber" class="form-control">
+                    <option value="0">Seleccione cantidad de columnas</option>
+                    <option {% if settingColumn.valueSetting is defined and settingColumn.valueSetting  == 1 %}selected{% endif %} value="1">1 columna</option>
+                    <option {% if settingColumn.valueSetting is defined and  settingColumn.valueSetting == 2 %}selected{% endif %} value="2">2 columnas</option>
+                </select>
+               <input type="hidden" id="columnSettingID" name="columnSettingID" value="{% if settingColumn.id is defined %}{{ settingColumn.id }}{% endif %}" />
                 <div class="box-tools">
                     <div class="input-group">                   
                         <div class="input-group-btn">

@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Vorterix\BackendBundle\Entity\Highlight;
+use Vorterix\BackendBundle\Entity\Settings;
 
 class HighlightController extends Controller
 {
@@ -43,8 +44,12 @@ class HighlightController extends Controller
     public function indexAction()
     {
         $highlights = $this->getAllHighlights();
+        $em   = $this->getDoctrine()->getManager();
+        $key  = $em->getRepository("VorterixBackendBundle:Settings")->findBy(array("keySetting" => "DESTACADO_COLUMNAS"));
+        if(count($key) > 0)
+            $key = $key[0];
         
-        return $this->render('VorterixBackendBundle:Highlight:index.html.twig', array('highlights' => $highlights));
+        return $this->render('VorterixBackendBundle:Highlight:index.html.twig', array('highlights' => $highlights, 'settingColumn' => $key));
         
     }
             
@@ -172,6 +177,32 @@ class HighlightController extends Controller
     
     private function getAllHighlights(){
         return $this->getDoctrine()->getRepository($this->repository)->findAll();
+    }
+    
+    public function columnChangeAction(Request $request){
+        
+        $columns = $request->request->get('columns');
+        $id      = $request->request->get('id');
+  
+        if($id != ''){
+            $em   = $this->getDoctrine()->getManager();
+            $key  = $em->getRepository("VorterixBackendBundle:Settings")->find($id);
+            $key->setValueSetting($columns);
+        }else{
+            $em   = $this->getDoctrine()->getManager();
+            $key  = $em->getRepository("VorterixBackendBundle:Settings")->findBy(array("keySetting" => "DESTACADO_COLUMNAS"));
+            
+            if($key == null){
+                $key = new Settings();
+                $key->setKeySetting('DESTACADO_COLUMNAS');
+                $key->setValueSetting($columns);
+            }
+        }
+ 
+        $em->persist($key);
+        $em->flush();
+        
+        return new Response($key->getId());
     }
 
 }
