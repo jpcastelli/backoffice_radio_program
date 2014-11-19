@@ -1,0 +1,7 @@
+<label>Top</label>
+<select class="form-control" name="post_top">
+    <option value="0">Seleccione un top</option>
+    {% for top in tops %}
+    <option {% if top.id == selected_id %}selected{% endif %} value="{{ top.id }}">{{ top.title }}</option>
+    {% endfor %}
+</select>

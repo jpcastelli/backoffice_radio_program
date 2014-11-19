@@ -138,6 +138,11 @@ class TopController extends Controller
             }
     }
     
+    public function listAction($id){
+        $tops = $this->getAll();
+        return $this->render('VorterixBackendBundle:Top:list.html.twig', array('tops'=>$tops,'selected_id' => $id));
+    }
+    
     /**
      * Returns gallery files path.
      * @return string

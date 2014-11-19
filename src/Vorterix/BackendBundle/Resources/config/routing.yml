@@ -199,3 +199,6 @@ VorterixBackendBundle_top_removeImage:
     path:     backend/top/removeImage/{id}
     defaults: { _controller: VorterixBackendBundle:Top:removeImage, id : null }
     
+VorterixBackendBundle_top_list:
+    path:     backend/top/list/{id}
+    defaults: { _controller: VorterixBackendBundle:Top:list, id : null }
