@@ -86,6 +86,11 @@ class Post
     private $galleries;
     
     /**
+     * @ORM\ManyToOne(targetEntity="Top")
+     */
+    private $top;
+    
+    /**
      * @var boolean
      *
      * @ORM\Column(name="status", type="boolean")
@@ -472,5 +477,28 @@ class Post
     public function getSection()
     {
         return $this->section;
+    }
+
+    /**
+     * Set top
+     *
+     * @param \Vorterix\BackendBundle\Entity\Top $top
+     * @return Post
+     */
+    public function setTop(\Vorterix\BackendBundle\Entity\Top $top = null)
+    {
+        $this->top = $top;
+
+        return $this;
+    }
+
+    /**
+     * Get top
+     *
+     * @return \Vorterix\BackendBundle\Entity\Top 
+     */
+    public function getTop()
+    {
+        return $this->top;
     }
 }

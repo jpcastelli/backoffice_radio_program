@@ -52,6 +52,7 @@ class PostController extends Controller
         $post_type     = $request->request->get('post_type');
         $category_id   = ($post_type == "category") ? $request->request->get('post_category') : null;
         $section_id    = ($post_type == "section")  ? $request->request->get('post_section')  : null;
+        $top_id        = $request->request->get('post_top');
         $tags          = $request->request->get('tags');
         $galleries     = $request->request->get('post_galleries');
         $cover         = $request->request->get('post_cover');
@@ -65,6 +66,7 @@ class PostController extends Controller
         //Get Category entity object
         $category = ($category_id != null || $category_id != '') ? $em->getRepository('VorterixBackendBundle:Category')->find($category_id) : null;
         $section  = ($section_id != null  || $section_id  != '') ? $em->getRepository('VorterixBackendBundle:Section')->find($section_id)   : null;
+        $top      = ($top_id  != '') ? $em->getRepository('VorterixBackendBundle:Top')->find($top_id) : null;
         
         //Save tags array
         $this->saveTags($tags);
@@ -78,6 +80,7 @@ class PostController extends Controller
         $post->setSection($section);
         $this->setPostGalleries($post, $galleries);
         $post->setStatus($post_status);
+        $post->setTop($top);
         $post->setCover($cover);
         $post->setMainVideo($video);
         $post->setComments($comments);
@@ -126,6 +129,7 @@ class PostController extends Controller
   
         $tags = $this->getAllTagsAction();
         $galleries = $this->getAllGalleries();
+        $selected_top = $post->getTop();
         
         return $this->render('VorterixBackendBundle:Post:edit.html.twig', array('post' => $post, 'tags' => $tags,
                                                                                 'galleries' => $galleries));   
@@ -183,6 +187,12 @@ class PostController extends Controller
         $em = $this->getDoctrine()->getManager();
         $galleries = $em->getRepository('VorterixBackendBundle:Gallery')->findAll();
         return $galleries;
+    }
+    
+    private function getAllTops(){
+        $em = $this->getDoctrine()->getManager();
+        $tops = $em->getRepository('VorterixBackendBundle:Top')->findAll();
+        return $tops;
     }
     
     private function setPostGalleries($post, $galleries){
