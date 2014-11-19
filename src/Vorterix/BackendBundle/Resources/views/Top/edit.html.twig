@@ -1,0 +1,133 @@
+{% extends 'VorterixBackendBundle::layout.html.twig' %}
+{% block title %}Vorterix :: Top Post{% endblock %}
+{% block section_title %}Vorterix :: Top Post{% endblock %}
+{% block stylesheets %}
+    {{parent()}}
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/uploadify/uploadify.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/galleries.css') }}" type="text/css" />
+{% endblock %}
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/uploadify/jquery.uploadify.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/vtx_main.js') }}"></script>
+    <script type="text/javascript">
+    $(function(){
+        //Image gallery upload
+        $('#file_upload').uploadify({
+            'auto'        : false,
+            'swf'         : '{{ asset('bundles/vorterixbackend/swf/uploadify.swf') }}',
+            'uploader'    : '{{ url('VorterixBackendBundle_ajupload') }}',
+            'fileObjName' : 'the_file',
+            'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
+            'multi'       : true,
+            'buttonText' : 'Browse',
+            'formData'    : { 'type' : 'temp' },
+            'onUploadSuccess' : function(file, data,response) {
+                var topTitle = $("#top_title").val();
+                var topDesc  = $("#top_description").val();
+                $("#top_title").val('');
+                $("#top_description").val('');
+                
+                
+                $("#images-list").append('<div class="image-module">'+
+                                         '<a href="{{ url('VorterixBackendBundle_removeTempImage') }}/'+data+'" class="remove-element"></a>'+
+                                         '<img src="{{ asset('uploads/temp/') }}' + data +'" width="100" />'+
+                                         '<div class="top-container">'+
+                                         '<span class="top-title">'+topTitle+'</span>'+
+                                         '<p class="top-description">'+topDesc+'</p>'+
+                                         '<input type="hidden" name="top-titles[]" value="'+topTitle+'" />' +
+                                         '<input type="hidden" name="top-images[]" value="'+data+'" />' +
+                                         '<textarea name="top-descriptions[]" readOnly class="form-control" rows="3" >'+topDesc+'</textarea>'+
+                                         '</div></div>');
+            }
+        });
+        
+        //Removes video cover before/after adding it to images list.
+        $("#images-list").on("click", ".remove-element", function(e){
+            e.preventDefault();
+            var url = $(this).attr('href');
+            removeSlow($(this).parents('.image-module'));
+            
+            $.ajax({
+                type: 'post',
+                url: url,
+                success: function(file, data,response){  
+                }
+            });
+        });
+
+    });
+    </script>
+{% endblock %}
+{% block content %}
+    <form name="post_creation" action="{{ url('VorterixBackendBundle_top_save') }}" method="post">
+        <input type="hidden" name="top_id" value="{{ top.id }}" />
+        
+    <div class="col-md-8">
+        <div class="box box-solid box-danger">
+            <div class="box-header">
+                <h3 class="box-title">Top Post</h3>
+            </div>
+            <div class="box-body">
+                <input type="text" name="top-name" id="gallery-name" value="{{ top.title }}" class="form-control input-lg" placeholder="Nombre Top Post" /><br />
+            </div>
+        </div>
+    </div>
+    
+     <div class="col-md-4">
+        <div id="save-gallery" class="box box-solid box-danger">
+            <div class="box-header"></div>
+            <div id="control-buttons" class="box-body">
+                <div class="form-group">
+                    <button class="btn btn-success btn-lg">Guardar Tops</button>
+                </div>
+            </div>
+        </div>  
+    </div>
+    
+    <div class="col-md-8">
+        <div class="box box-solid box-danger">
+            <div class="box-header">
+                <h3 class="box-title">Agregar Top Post</h3>
+            </div>
+            <div class="box-body">
+                <div class="form-group">
+                    <input class="form-control input-lg" id="top_title" name="top_title" type="text" placeholder="Titulo" />
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control input-lg" id="top_description" name="top_description" rows="3" placeholder="Descripcion"></textarea>
+                </div>
+                <div class="image-upload-container">
+                    <div id="queue"></div>
+                    <input id="file_upload" name="file_upload" type="file" multiple="true">
+                    <a href="javascript:$('#file_upload').uploadify('upload','*')">Subir Archivos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="box box-solid box-danger">
+            <div class="box-header">
+                <h3 class="box-title">Listado de Tops</h3>
+            </div>
+            <div id="images-list" class="box-body">
+                {% for topElement in topElements %}
+                <div class="image-module">
+                    <a href="{{ url('VorterixBackendBundle_top_removeImage') }}/{{ topElement.id }}" class="remove-element"></a>
+                    <img src="{{ asset('uploads/top/') }}{{ topElement.name }}" width="100" />
+                    <div class="top-container">
+                       <span class="top-title">{{ topElement.title }}</span>
+                       <p class="top-description">{{ topElement.description }}</p>
+                       <input type="hidden" name="top-titles[]" value="{{ topElement.title }}" />
+                       <input type="hidden" name="top-images[]" value="{{ topElement.name }}" />
+                       <input type="hidden" name="top-images-id[]" value="{{ topElement.id }}" />
+                       <textarea name="top-descriptions[]" readOnly class="form-control" rows="3" >{{ topElement.description }}</textarea>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div> 
+</form>
+{% endblock %}

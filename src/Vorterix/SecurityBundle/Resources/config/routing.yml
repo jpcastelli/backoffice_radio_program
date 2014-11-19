@@ -1,5 +1,5 @@
 VorterixSecurityBundle_login:
-    path:    /backend/login
+    path:    backend/login
     defaults: { _controller: VorterixSecurityBundle:Security:login }
     
 VorterixSecurityBundle_login_check:

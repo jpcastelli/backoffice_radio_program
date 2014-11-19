@@ -69,6 +69,20 @@ class UploaderController extends Controller
         }
     }
     
+    public function removeTempImageAction($filename){
+ 
+        $path     = $this->getPath('temp');
+
+        try{
+        if(unlink($path.$filename))
+           return new Response(Response::HTTP_OK);
+        else
+            return new Response(Response::HTTP_NOT_FOUND);
+        }  catch (\Exception $e){
+            return new Response(Response::HTTP_NOT_FOUND);
+        }
+    }
+    
     public function fileTreeAction(Request $request){
         $host ="us.upload.octoshape.com";
         $username = "sion-vorterix2015";

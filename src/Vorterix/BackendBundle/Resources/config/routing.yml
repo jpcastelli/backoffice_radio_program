@@ -57,6 +57,10 @@ VorterixBackendBundle_ajupload:
 VorterixBackendBundle_removeImage:
     pattern:  /backend/removeImage
     defaults: { _controller: VorterixBackendBundle:Uploader:removeImage }
+    
+VorterixBackendBundle_removeTempImage:
+    pattern:  /backend/removeTempImage/{filename}
+    defaults: { _controller: VorterixBackendBundle:Uploader:removeTempImage, filename : null }
 
 VorterixBackendBundle_FileTree:
     pattern:  /backend/fileTree
@@ -170,4 +174,28 @@ VorterixBackendBundle_highlight_removeFile:
 VorterixBackendBundle_highlight_columnChange:
     path:     backend/destacado/columnChange
     defaults: { _controller: VorterixBackendBundle:Highlight:columnChange }
+    
+VorterixBackendBundle_top:
+    path:     backend/top
+    defaults: { _controller: VorterixBackendBundle:Top:index }
+    
+VorterixBackendBundle_top_new:
+    path:     backend/top/new
+    defaults: { _controller: VorterixBackendBundle:Top:new }
+    
+VorterixBackendBundle_top_edit:
+    path:     backend/top/edit/{id}
+    defaults: { _controller: VorterixBackendBundle:Top:edit, id : null }
+    
+VorterixBackendBundle_top_save:
+    path:     backend/top/save
+    defaults: { _controller: VorterixBackendBundle:Top:save }
+    
+VorterixBackendBundle_top_delete:
+    path:     backend/top/delete/{id}
+    defaults: { _controller: VorterixBackendBundle:Top:delete, id : null }
+    
+VorterixBackendBundle_top_removeImage:
+    path:     backend/top/removeImage/{id}
+    defaults: { _controller: VorterixBackendBundle:Top:removeImage, id : null }
     
