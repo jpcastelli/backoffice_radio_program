@@ -18,7 +18,7 @@ security:
         backend_area:
             pattern:    ^/backend
             http_basic: ~
-            security: false
+            security: true
             form_login:
                 login_path: /backend/login
                 check_path: /backend/login_check
