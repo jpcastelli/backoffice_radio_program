@@ -215,8 +215,9 @@
        }
    });
     
-    
-    
+    $('#top-table').dataTable();
+  
+
 });
     </script>
 {% endblock %}
@@ -281,7 +282,11 @@
                 </div>
             </div>
         </div>
-
+        
+        <div id="topList" class="form-group">
+            {% render url('VorterixBackendBundle_top_list') %}
+        </div>
+                     
         <div class='row'>
             <div class='col-md-12'>
                 <div class='box box-solid box-success'>
@@ -317,10 +322,6 @@
                 
                 <div id="sectionList" class="form-group hidden">
                     {% render url('VorterixBackendBundle_section_list') %}
-                </div>
-                
-                 <div id="topList" class="form-group">
-                    {% render url('VorterixBackendBundle_top_list') %}
                 </div>
                 
                 <div class="form-group">

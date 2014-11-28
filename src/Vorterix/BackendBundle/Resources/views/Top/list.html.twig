@@ -1,7 +1,43 @@
-<label>Top</label>
-<select class="form-control" name="post_top">
-    <option value="0">Seleccione un top</option>
-    {% for top in tops %}
-    <option {% if top.id == selected_id %}selected{% endif %} value="{{ top.id }}">{{ top.title }}</option>
-    {% endfor %}
-</select>
+
+    <!-- Primary box -->
+    <div class="box box-solid box-success">
+        <div class="box-header" data-toggle="tooltip" title="" data-original-title="Header tooltip">
+            <h3 class="box-title">Elegir TOP</h3>
+            <div class="box-tools pull-right">
+                <button class="btn btn-success btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button class="btn btn-success btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+            </div>
+        </div>
+        <div class="box-body" style="display: block;">
+            <div class="box">
+                <div class="box-header"></div><!-- /.box-header -->
+                <div class="box-body table-responsive">
+                    <table id="top-table" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>TOP ID</th>
+                                <th>TOP TITLE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for top in tops %}
+                            <tr>
+                                <td><input {% if top.id == selected_id %}checked{% endif %} type="radio" name="post_top" value="{{ top.id }}" /></td>
+                                <td>{{ top.id }}</td>
+                                <td>{{ top.title }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th></th>
+                                <th>TOP ID</th>
+                                <th>TOP TITLE</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+        </div><!-- /.box-body -->
+    </div><!-- /.box -->
