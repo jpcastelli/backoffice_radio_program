@@ -5,6 +5,7 @@ namespace Vorterix\BackendBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use \Symfony\Component\HttpFoundation\JsonResponse;
 use Gaufrette\Adapter\Ftp as FtpAdapter;
 use \Imagick;
 
@@ -113,22 +114,16 @@ class UploaderController extends Controller
     }
     
     public function cropImageAction(Request $request){
-        $filename    = $request->request->get('filename');
-        $coverXpos   = $request->request->get('x-pos');
-        $coverYpos   = $request->request->get('y-pos');
-        $coverWidth  = $request->request->get('coverWidth');
-        $coverHeight = $request->request->get('coverHeight');
-        $coverFolder = $this->getPath('post');
-
-        $imagickObj = new \Imagick($coverFolder.$filename);
-        $imagickObj->cropImage($coverWidth, $coverHeight, $coverXpos, $coverYpos);
-        //unlink($coverFolder.$filename);
         
-        if($imagickObj->writeimage($coverFolder.$filename))
-           return new Response( Response::HTTP_OK );
-        else
-            return new Response( Response::HTTP_NOT_FOUND );
+        $uploadedFile  = $request->files->get('file');     
+        $path          = $this->getPath('post');
+   
+        $fileExtension = strtolower($uploadedFile->guessExtension());
+        $newFilename   = date('d-m-Y H.i.s').'.'.$fileExtension;
+        $uploadedFile->move($path, $newFilename);
+        $response = new Response($newFilename);
         
+        return $response; 
     }
     
     private function getUploadsDir(){
