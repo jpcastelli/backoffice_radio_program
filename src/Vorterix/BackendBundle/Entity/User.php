@@ -29,6 +29,16 @@ class User implements UserInterface, \Serializable
      * @ORM\Column(type="string", length=64)
      */
     private $password;
+    
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    private $name;
+    
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    private $lastname;
 
     /**
      * @ORM\Column(type="string", length=60, unique=true)
@@ -226,5 +236,51 @@ class User implements UserInterface, \Serializable
     public function removeRole(\Vorterix\BackendBundle\Entity\Role $roles)
     {
         $this->roles->removeElement($roles);
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return User
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string 
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set lastname
+     *
+     * @param string $lastname
+     * @return User
+     */
+    public function setLastname($lastname)
+    {
+        $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    /**
+     * Get lastname
+     *
+     * @return string 
+     */
+    public function getLastname()
+    {
+        return $this->lastname;
     }
 }
