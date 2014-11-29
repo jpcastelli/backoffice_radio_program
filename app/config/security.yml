@@ -1,22 +1,32 @@
 security:
-    firewalls:
-        secured_area:
-            pattern:   ^/
-            anonymous: ~
-            http_basic:
-                realm: "Secured Demo Area"
+    encoders:
+        Vorterix\BackendBundle\Entity\User:
+            algorithm: bcrypt
 
-    access_control:
-        - { path: ^/backend/, roles: ROLE_ADMIN }
-        # Include the following line to also secure the /admin path itself
-        # - { path: ^/admin$, roles: ROLE_ADMIN }
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: [ ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH ]
 
     providers:
-        in_memory:
-            memory:
-                users:
-                    ryan:  { password: ryanpass, roles: 'ROLE_USER' }
-                    admin: { password: kitten, roles: 'ROLE_ADMIN' }
+        administrators:
+            entity: { class: VorterixBackendBundle:User }
 
-    encoders:
-        Symfony\Component\Security\Core\User\User: plaintext
+    firewalls:
+        login_firewall:
+            pattern:   ^/backend/login$
+            anonymous: ~
+        backend_area:
+            pattern:    ^/backend
+            http_basic: ~
+            security: true
+            form_login:
+                login_path: /backend/login
+                check_path: /backend/login_check
+                csrf_provider: form.csrf_provider
+            logout:
+                path:   /backend/logout
+                target: /backend/login
+
+    access_control:
+        - { path: ^/backend/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/backend, roles: ROLE_ADMIN }
