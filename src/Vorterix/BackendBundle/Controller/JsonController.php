@@ -105,7 +105,7 @@ class JsonController extends Controller
                 $path = __DIR__.'/../../../../web/uploads/json/guetap.json';
             break;
             case 21: 
-                $path = _DIR__.'/../../../../web/uploads/json/malditos_nerds.json';
+                $path = __DIR__.'/../../../../web/uploads/json/malditos_nerds.json';
             break;
         }
         
