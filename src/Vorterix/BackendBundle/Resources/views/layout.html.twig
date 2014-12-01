@@ -50,7 +50,7 @@
                                         <li>
                                             <a href="#">
                                                 <div class="pull-left">
-                                                    <img src="{{ asset('/uploads/avatars/avatar.png') }}" class="img-circle" alt="user image"/>
+                                                    <img src="{{ asset('uploads/avatars/avatar.png') }}" class="img-circle" alt="user image"/>
                                                 </div>
                                                 <h4>
                                                     Reviewers
@@ -237,6 +237,7 @@
                                 <li><a href="{{ path('VorterixBackendBundle_post') }}"><i class="fa fa-angle-double-right"></i> Listado</a></li>
                             </ul>
                         </li>
+                        {% if is_granted('ROLE_ADMIN') %}
                         <li class="treeview">
                             <a href="{{ path('VorterixBackendBundle_category') }}">
                                 <i class="fa fa-bar-chart-o"></i>
@@ -248,6 +249,7 @@
                                 <li><a href="{{ path('VorterixBackendBundle_category') }}"><i class="fa fa-angle-double-right"></i> Listado</a></li>
                             </ul>
                         </li>
+                        {% endif %}
                         <li class="treeview">
                             <a href="{{ path('VorterixBackendBundle_gallery') }}">
                                 <i class="fa fa-bar-chart-o"></i>
@@ -291,6 +293,7 @@
                                 <li><a href="{{ path('VorterixBackendBundle_top_new') }}"><i class="fa fa-angle-double-right"></i> Crear Json</a></li>
                             </ul>
                         </li>
+                        {% if is_granted('ROLE_ADMIN') %}
                         <li class="treeview">
                             <a href="{{ path('VorterixBackendBundle_Json') }}">
                                 <i class="fa fa-bar-chart-o"></i>
@@ -301,6 +304,7 @@
                                 <li><a href="{{ path('VorterixBackendBundle_Json') }}"><i class="fa fa-angle-double-right"></i> Crear Json</a></li>
                             </ul>
                         </li>
+                        {% endif %}
                     </ul>
                 </section>
                 <!-- /.sidebar -->
