@@ -82,32 +82,8 @@ class JsonController extends Controller
 
     private function getPath($category){
         
-        switch ($category){
-            case 0: 
-                $path = __DIR__.'/../../../../web/uploads/json/home.json';
-            break;
-            case 1: 
-                $path = __DIR__.'/../../../../web/uploads/json/tmn.json';
-            break;
-            case 3: 
-                $path = __DIR__.'/../../../../web/uploads/json/acido.json';
-            break;
-            case 6: 
-                $path = __DIR__.'/../../../../web/uploads/json/delicias.json';
-            break;
-            case 13: 
-                $path = __DIR__.'/../../../../web/uploads/json/grupo_muerte.json';
-            break;
-            case 19: 
-                $path = __DIR__.'/../../../../web/uploads/json/newsterix.json';
-            break;
-            case 20: 
-                $path = __DIR__.'/../../../../web/uploads/json/guetap.json';
-            break;
-            case 21: 
-                $path = __DIR__.'/../../../../web/uploads/json/malditos_nerds.json';
-            break;
-        }
+        $filename = $this->getJsonName($category);
+        $path = __DIR__."/../../../../web/uploads/json/$filename";
         
         return $path;
     }
@@ -119,9 +95,6 @@ class JsonController extends Controller
             case 0: 
                   $file = 'home.json';
                   break;
-            case 1: 
-                $file = 'tmn.json';
-                break;
             case 3: 
                 $file = 'acido.json';
                 break;
@@ -140,6 +113,30 @@ class JsonController extends Controller
             case 21: 
                 $file = 'malditos_nerds.json';
                 break;
+            case 25: 
+                $file = 'cartelera.json';
+            break;
+            case 26: 
+                $file = 'opinion.json';
+            break;
+            case 27: 
+                $file = 'general.json';
+            break;
+            case 28: 
+                $file = 'tmn.json';
+            break;
+            case 29: 
+                $file = 'bestias.json';
+            break;
+            case 30: 
+                $file = 'cheque.json';
+            break;
+            case 31: 
+                $file = 'cuchillo.json';
+            break;
+            case 32: 
+                $file = 'dobleonada.json';
+            break;
         }
 
         return $file;
