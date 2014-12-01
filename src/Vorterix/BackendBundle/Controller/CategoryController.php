@@ -35,7 +35,7 @@ class CategoryController extends Controller
                 );
             }
         }else{
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $category = new \Vorterix\BackendBundle\Entity\Category();
         }
             
@@ -70,7 +70,7 @@ class CategoryController extends Controller
     
     public function deleteAction($id){
     
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $category = $em->getRepository($this->repository)->find($id);
         $em->remove($category);
         $em->flush();
