@@ -55,7 +55,7 @@
                     <a href="javascript:$('#file_upload').uploadify('upload','*')">Subir Archivos</a>
                     <div id="show-images"></div>
                     {% if category.cover %}
-                    <img src="/vtx_backend/web/uploads/categories/cover/{{ category.cover }}" width="100" />
+                    <img src="{{ asset('uploads/categories/cover/') }}{{ category.cover }}" width="100" />
                     <input type="hidden" name="category_cover" value="{{ category.cover }}" />
                     {% endif %}
                     
