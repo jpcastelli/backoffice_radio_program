@@ -4,6 +4,7 @@ namespace Vorterix\BackendBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\Query\Expr\Join;
 
 class JsonController extends Controller
 {
@@ -197,7 +198,7 @@ class JsonController extends Controller
                 ->createQueryBuilder()
                 ->select('c.name as programa, q.id,q.pretitle, q.title, q.shortDescription, q.description, q.cover, q.status, q.createD, q.comments')
                 ->from('VorterixBackendBundle:Post', 'q')
-                ->innerJoin('VorterixBackendBundle:Category', 'c')
+                ->innerJoin('VorterixBackendBundle:Category', 'c', Join::WITH, 'q.category = c.id')
                 ->orderBy('q.publishD', 'DESC')
                 ->where('q.status=true' )
                 ->setFirstResult( 1 )
