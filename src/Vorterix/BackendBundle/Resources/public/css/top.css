@@ -1,0 +1,34 @@
+.image-module img{
+    width: 170px;
+    height: 97px;
+    float: left;
+    
+}
+
+.image-module{
+    position: relative;
+    margin-top: 10px;
+    border: 1px solid #F56954;
+    padding: 10px;
+}
+
+.image-module .input-order{
+    width: 7%;
+}
+
+.image-module input.input-title, .image-module .textarea{
+    width: 65%;
+    margin-left: 20px;
+    display: inline;
+}
+
+a.remove-element{
+    background: url('../images/cancel.png') no-repeat;
+    width: 16px;
+    height: 16px;
+    float: right;
+}
+
+#save-gallery{
+    position: fixed;
+}

@@ -24,17 +24,33 @@ class TopController extends Controller
         return $this->render('VorterixBackendBundle:Top:new.html.twig', array());
     }
 
+    
+    private function getTopOrder($a, $b){
+        return $a < $b;
+        
+    }
     /**
      * @Route("/edit")
      * @Template()
      */
     public function editAction($id)
     {
-        $em          = $this->getDoctrine()->getEntityManager();
-        $top         = $em->getRepository($this->repository)->find($id);
-        $topElements = $top->getTopImages();
+        $em             = $this->getDoctrine()->getManager();
+        $top            = $em->getRepository($this->repository)->find($id);
+        $topElements    = $top->getTopImages();
+        $arrTopElements = array();
+        $index          = 1;
+
+        foreach($topElements as $element){
+            $order = $element->getTopOrder();
+            echo $order;
+            $arrTopElements[($order == 0) ? $index : $order] = $element;
+            $index++;
+        }
         
-        return $this->render('VorterixBackendBundle:Top:edit.html.twig', array('top' => $top, 'topElements' => $topElements));  
+        ksort($arrTopElements);
+ 
+        return $this->render('VorterixBackendBundle:Top:edit.html.twig', array('top' => $top, 'topElements' => $arrTopElements));  
     }
             
     public function saveAction(Request $request){
@@ -42,8 +58,10 @@ class TopController extends Controller
         $title           = $request->request->get('top-name');
         $topTitles       = $request->request->get('top-titles');
         $topDescriptions = $request->request->get('top-descriptions');
+        $topOrders       = $request->request->get('top-order');
         $topImages       = $request->request->get('top-images');
         $topImagesID     = $request->request->get('top-images-id');
+ 
         $em              = $this->getDoctrine()->getManager();
         
         if($request->request->get('top_id')){
@@ -55,7 +73,7 @@ class TopController extends Controller
         }
         
         $top->setTitle($title);
-        $this->saveTopImages($top, $topTitles, $topDescriptions, $topImages, $topImagesID);
+        $this->saveTopImages($top, $topTitles, $topDescriptions, $topOrders, $topImages, $topImagesID);
         
         $em->persist($top);
         $em->flush();
@@ -64,7 +82,7 @@ class TopController extends Controller
         return $this->redirect($this->generateUrl('VorterixBackendBundle_top', array()));
     }
     
-    private function saveTopImages($top, $topTitles, $topDescriptions, $topImages, $topImagesID){
+    private function saveTopImages($top, $topTitles, $topDescriptions, $topOrders, $topImages, $topImagesID){
         
         $em = $this->getDoctrine()->getManager();
         
@@ -80,6 +98,7 @@ class TopController extends Controller
                         $image->setName($imageName);
                         $image->setTitle($topTitles[$counter]);
                         $image->setDescription($topDescriptions[$counter]);
+                        $image->setTopOrder((int)$topOrders[$counter]);
                         $image->setTop($top);
                         $top->addTopImage($image);
                     }
@@ -100,7 +119,7 @@ class TopController extends Controller
     
     public function deleteAction($id){
         
-        $em        = $this->getDoctrine()->getEntityManager();
+        $em        = $this->getDoctrine()->getManager();
         $top       = $em->getRepository($this->repository)->find($id);
         $topImages = $top->getTopImages();
         
@@ -122,7 +141,7 @@ class TopController extends Controller
     }
     
     public function removeImageAction($id){
-        $em        = $this->getDoctrine()->getEntityManager();
+        $em        = $this->getDoctrine()->getManager();
         $top       = $em->getRepository("VorterixBackendBundle:TopImage")->find($id);
         $path      = $this->getPath('top');
         

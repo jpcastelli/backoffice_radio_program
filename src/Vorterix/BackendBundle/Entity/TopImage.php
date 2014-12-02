@@ -41,6 +41,13 @@ class TopImage
      * @ORM\Column(name="description", type="string", length=255, nullable=true)
      */
     private $description;
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="topOrder", type="integer", nullable=true)
+     */
+    private $topOrder;
 
     /**
      * @ORM\ManyToOne(targetEntity="Top", inversedBy="topImages")
@@ -171,5 +178,29 @@ class TopImage
     public function getTop()
     {
         return $this->top;
+    }
+
+
+    /**
+     * Set topOrder
+     *
+     * @param integer $topOrder
+     * @return TopImage
+     */
+    public function setTopOrder($topOrder)
+    {
+        $this->topOrder = $topOrder;
+
+        return $this;
+    }
+
+    /**
+     * Get topOrder
+     *
+     * @return integer 
+     */
+    public function getTopOrder()
+    {
+        return $this->topOrder;
     }
 }

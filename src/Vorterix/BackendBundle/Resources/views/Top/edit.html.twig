@@ -5,6 +5,7 @@
     {{parent()}}
     <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/uploadify/uploadify.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/galleries.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/top.css') }}" type="text/css" />
 {% endblock %}
 {% block javascripts %}
     {{parent()}}
@@ -27,17 +28,16 @@
                 var topDesc  = $("#top_description").val();
                 $("#top_title").val('');
                 $("#top_description").val('');
-                
+                var order = $('.image-module').size() + 1;
                 
                 $("#images-list").append('<div class="image-module">'+
                                          '<a href="{{ url('VorterixBackendBundle_removeTempImage') }}/'+data+'" class="remove-element"></a>'+
                                          '<img src="{{ asset('uploads/temp/') }}' + data +'" width="100" />'+
                                          '<div class="top-container">'+
-                                         '<span class="top-title">'+topTitle+'</span>'+
-                                         '<p class="top-description">'+topDesc+'</p>'+
-                                         '<input type="hidden" name="top-titles[]" value="'+topTitle+'" />' +
+                                         '<input type="text" class="input-title" name="top-titles[]" value="'+topTitle+'" />' +
                                          '<input type="hidden" name="top-images[]" value="'+data+'" />' +
-                                         '<textarea name="top-descriptions[]" readOnly class="form-control" rows="3" >'+topDesc+'</textarea>'+
+                                         '<textarea name="top-descriptions[]" class="form-control textarea" rows="3" >'+topDesc+'</textarea>'+
+                                         '<input type="text" class="input-order" name="top-order[]" value="'+order+'" />' +
                                          '</div></div>');
             }
         });
@@ -117,12 +117,11 @@
                     <a href="{{ url('VorterixBackendBundle_top_removeImage') }}/{{ topElement.id }}" class="remove-element"></a>
                     <img src="{{ asset('uploads/top/') }}{{ topElement.name }}" width="100" />
                     <div class="top-container">
-                       <span class="top-title">{{ topElement.title }}</span>
-                       <p class="top-description">{{ topElement.description }}</p>
-                       <input type="hidden" name="top-titles[]" value="{{ topElement.title }}" />
+                       <input type="text" class="input-title" name="top-titles[]" value="{{ topElement.title }}" />
                        <input type="hidden" name="top-images[]" value="{{ topElement.name }}" />
                        <input type="hidden" name="top-images-id[]" value="{{ topElement.id }}" />
-                       <textarea name="top-descriptions[]" readOnly class="form-control" rows="3" >{{ topElement.description }}</textarea>
+                       <textarea name="top-descriptions[]" class="form-control textarea" rows="3" >{{ topElement.description }}</textarea>
+                       <input type="text" class="input-order" name="top-order[]" value="{{ topElement.topOrder }}" />
                     </div>
                 </div>
                 {% endfor %}
