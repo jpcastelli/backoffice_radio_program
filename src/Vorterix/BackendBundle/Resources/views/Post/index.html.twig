@@ -41,7 +41,7 @@ $(function() {
                         <td>{{ post.id }}</td>
                         <td><a href="{{ url('VorterixBackendBundle_post_edit') }}/{{ post.id }}">{{ post.title }}</a></td>
                         <td><a href="{{ url('VorterixBackendBundle_post_edit') }}/{{ post.id }}">{{ post.shortDescription }}</a></td>
-                        <td>{% if post.category.name is defined %}{{ post.category.name }}{% endif %}</td>
+                        <td>{% if post.category is not null %}{{ post.category.name }}{% endif %}</td>
                         <td>
                             {% if post.status == 1 %}
                                 <span class="label label-success">Publicado</span>
