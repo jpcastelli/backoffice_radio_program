@@ -113,16 +113,12 @@ class PostController extends Controller
         $em->persist($post);
         $em->flush();
 
-        $posts = $this->getAllPosts();
         
-        $content = $this->renderView(
-                    'VorterixBackendBundle:Post:index.html.twig',
-                    array('success_post' => 'true',
-                        'posts' => $posts)
-                    );
         $this->generateAction($category_id);
         $this->generateAction(0);
-        return new Response($content);
+        
+        $this->get('session')->getFlashBag()->add('success','Perfecto! El post ha sido guardado exitosamente');
+        return $this->redirect($this->generateUrl('VorterixBackendBundle_post', array()));
     }
 
     public function editAction($id){
@@ -145,15 +141,8 @@ class PostController extends Controller
         $em->remove($post);
         $em->flush();
         
-        $posts = $this->getAllPosts();
-
-        $content = $this->renderView(
-                        'VorterixBackendBundle:Post:index.html.twig',
-                        array('success_post' => 'true',
-                              'posts'        => $posts )
-                    );
-               
-        return new Response($content);
+        $this->get('session')->getFlashBag()->add('success','Perfecto! El post ha sido eliminado exitosamente');
+        return $this->redirect($this->generateUrl('VorterixBackendBundle_post', array()));
     }
     
     private function getAllPosts(){
