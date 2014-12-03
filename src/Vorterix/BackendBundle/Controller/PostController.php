@@ -317,12 +317,13 @@ class PostController extends Controller
                     'notasdestacadas'   => $this->getNotaDestacada(),
                     $postxblock,
                     'bannertop'         => $this->getBannerTop(),
-                    'notasbloqueleidas' => $this->getNotasBloqueLeidas(),
-                    'videosmasvistos'   => $this->getVideosMasVistos(),
-                    'postsCartelera'    => $postsCartelera,
-                    'postsOpinion'      => $postsOpinion,
-                    'secciones'         => $this->getSections(),
-                    'numColumnasDestacado' => $this->getNumeroColumnasDestacado()
+                    'notasbloqueleidas'    => $this->getNotasBloqueLeidas(),
+                    'videosmasvistos'      => $this->getVideosMasVistos(),
+                    'postsCartelera'       => $postsCartelera,
+                    'postsOpinion'         => $postsOpinion,
+                    'secciones'            => $this->getSections(),
+                    'numColumnasDestacado' => $this->getNumeroColumnasDestacado(),
+                    'streamings'           => $this->getStreamings()
                 )
             );
  
@@ -610,5 +611,28 @@ class PostController extends Controller
         $category = $em->getRepository('VorterixBackendBundle:Category')->findOneByName($categoryName);
 
         return $category->getId();
+    }
+    
+    private function getStreamings(){
+        
+        $em            = $this->getDoctrine()->getManager();
+        $streamings    = $em->getRepository('VorterixBackendBundle:Streaming')->findAll();
+        $arrStreamings = Array();
+        $counter       = 0;
+
+        foreach($streamings as $streaming){
+            $arrStreamings[$counter]['id']            = $streaming->getId();
+            $arrStreamings[$counter]['mainStreaming'] = $streaming->getMainStreaming();
+            $arrStreamings[$counter]['name']          = $streaming->getName();
+            $arrStreamings[$counter]['hash']          = $streaming->getHashtag();
+            $arrStreamings[$counter]['feed']          = $streaming->getTwFeed();
+            $arrStreamings[$counter]['cam1Url']       = $streaming->getStreamCam1();
+            $arrStreamings[$counter]['cam2Url']       = $streaming->getStreamCam2();
+            $arrStreamings[$counter]['cam3Url']       = $streaming->getStreamCam3();
+            $arrStreamings[$counter]['cam4Url']       = $streaming->getStreamCam4();
+            $counter++;
+        }
+        
+        return $arrStreamings;
     }
 }
