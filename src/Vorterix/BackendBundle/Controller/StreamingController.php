@@ -91,6 +91,8 @@ class StreamingController extends Controller
         $em->persist($streaming);
         $em->flush();
         
+        $this->generateAction();
+        
         $this->get('session')->getFlashBag()->add('success','Perfecto! La transmisión ha sido generada exitosamente');
         return $this->redirect($this->generateUrl('VorterixBackendBundle_streaming', array()));
     }
@@ -123,6 +125,7 @@ class StreamingController extends Controller
         $em->remove($streaming);
         $em->flush();
      
+        $this->generateAction();
         $this->get('session')->getFlashBag()->add('success','Perfecto! La transmisión ha sido eliminada exitosamente');
         return $this->redirect($this->generateUrl('VorterixBackendBundle_streaming', array()));
     }
@@ -143,6 +146,46 @@ class StreamingController extends Controller
     
     private function getUploadsDir(){
         return __DIR__.'/../../../../web/uploads/';
+    }
+    
+    /* ********************JSON CONTROLLER CODE******************** */
+    public function generateAction(){
+ 
+        $json = json_encode(
+                Array(
+                    'streamings' => $this->getStreamings()
+                )
+            );
+ 
+        $fs = new \Symfony\Component\Filesystem\Filesystem();
+        $fs->dumpFile(__DIR__."/../../../../web/uploads/json/transmisiones.json", $json);
+        
+        return true; 
+    }
+    
+    private function getStreamings(){
+        
+        $em            = $this->getDoctrine()->getManager();
+        $streamings    = $em->getRepository('VorterixBackendBundle:Streaming')->findAll();
+        $arrStreamings = Array();
+        $counter       = 0;
+
+        foreach($streamings as $streaming){
+            $arrStreamings[$counter]['id']            = $streaming->getId();
+            $arrStreamings[$counter]['mainStreaming'] = $streaming->getMainStreaming();
+            $arrStreamings[$counter]['name']          = $streaming->getName();
+            $arrStreamings[$counter]['background']    = $streaming->getBackground();
+            $arrStreamings[$counter]['image2']        = $streaming->getImagen();
+            $arrStreamings[$counter]['hash']          = $streaming->getHashtag();
+            $arrStreamings[$counter]['feed']          = $streaming->getTwFeed();
+            $arrStreamings[$counter]['cam1Url']       = $streaming->getStreamCam1();
+            $arrStreamings[$counter]['cam2Url']       = $streaming->getStreamCam2();
+            $arrStreamings[$counter]['cam3Url']       = $streaming->getStreamCam3();
+            $arrStreamings[$counter]['cam4Url']       = $streaming->getStreamCam4();
+            $counter++;
+        }
+        
+        return $arrStreamings;
     }
 
 }
