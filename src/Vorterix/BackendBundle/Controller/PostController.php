@@ -624,6 +624,8 @@ class PostController extends Controller
             $arrStreamings[$counter]['id']            = $streaming->getId();
             $arrStreamings[$counter]['mainStreaming'] = $streaming->getMainStreaming();
             $arrStreamings[$counter]['name']          = $streaming->getName();
+            $arrStreamings[$counter]['background']    = $streaming->getBackground();
+            $arrStreamings[$counter]['image2']        = $streaming->getImagen();
             $arrStreamings[$counter]['hash']          = $streaming->getHashtag();
             $arrStreamings[$counter]['feed']          = $streaming->getTwFeed();
             $arrStreamings[$counter]['cam1Url']       = $streaming->getStreamCam1();
