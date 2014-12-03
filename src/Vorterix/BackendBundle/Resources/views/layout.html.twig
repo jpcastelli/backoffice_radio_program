@@ -293,6 +293,16 @@
                                 <li><a href="{{ path('VorterixBackendBundle_top_new') }}"><i class="fa fa-angle-double-right"></i> Crear Json</a></li>
                             </ul>
                         </li>
+                        <li class="treeview">
+                            <a href="{{ path('VorterixBackendBundle_streaming') }}">
+                                <i class="fa fa-bar-chart-o"></i>
+                                <span>Streaming</span>
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="{{ path('VorterixBackendBundle_streaming_new') }}"><i class="fa fa-angle-double-right"></i> Crear Streaming</a></li>
+                            </ul>
+                        </li>
                         {% if is_granted('ROLE_ADMIN') %}
                         <li class="treeview">
                             <a href="{{ path('VorterixBackendBundle_Json') }}">

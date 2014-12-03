@@ -1,0 +1,91 @@
+{% extends 'VorterixBackendBundle::layout.html.twig' %}
+
+{% block title %}Vorterix :: Streaming{% endblock %}
+{% block section_title %}Vorterix :: Streaming{% endblock %}
+{% block javascripts %}
+{{parent()}} 
+<script type="text/javascript">
+$(function() {
+    var cookieName = 'streamingRecordsPage';
+    
+    function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
+    }
+    return "";
+}
+    
+    $('#list-table').dataTable();
+    
+    $('#list-table_length select').change(function(){
+       
+            setCookie(cookieName, $(this).val(), 365);
+    });
+    
+    if(getCookie(cookieName))
+       var records = getCookie(cookieName);
+    
+    if(records)
+        $('#list-table_length select option[value='+records+']').attr('selected','selected');
+    
+});
+</script>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Listado de Transmisi&oacute;nes</h3>
+                <div class="box-tools">
+                    <div class="input-group">                   
+                        <div class="input-group-btn">
+                            <a href="{{ url('VorterixBackendBundle_streaming_new') }}" class="btn btn-warning pull-right">Agregar Transmisi&oacute;n</a>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.box-header -->
+            <div class="box-body table-responsive no-padding table-responsive">
+                <table id="list-table" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Transmisi&oacute;n</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    {% for streaming in streamings %}
+                        <tr>
+                        <td>{{ streaming.id }}</td>
+                        <td><a href="{{ url('VorterixBackendBundle_streaming_edit') }}/{{ streaming.id }}">{{ streaming.name }}</a></td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default">Action</button>
+                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ url('VorterixBackendBundle_streaming_edit') }}/{{ streaming.id }}">Editar</a></li>
+                                    <li><a href="{{ url('VorterixBackendBundle_streaming_delete') }}/{{ streaming.id }}">Eliminar</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div><!-- /.box-body -->
+        </div><!-- /.box -->
+    </div>
+{% endblock %}

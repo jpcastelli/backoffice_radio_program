@@ -1,0 +1,131 @@
+{% extends 'VorterixBackendBundle::layout.html.twig' %}
+{% block stylesheets %}
+    {{parent()}}
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/uploadify/uploadify.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/vorterixbackend/css/styles.css') }}" type="text/css" /> 
+{% endblock %}
+{% block javascripts %}
+{{parent()}}
+<script type="text/javascript" src="{{ asset('bundles/vorterixbackend/js/uploadify/jquery.uploadify.min.js') }}"></script>
+<script type="text/javascript">
+$(function(){
+    $('#background_upload').uploadify({
+        'auto'        : false,
+        'swf'         : '{{ asset('bundles/vorterixbackend/swf/uploadify.swf') }}',
+        'uploader'    : '{{ url('VorterixBackendBundle_ajupload') }}',
+        'fileObjName' : 'the_file',
+        'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
+        'multi'       : false,
+        'buttonText' : 'Browse',
+        'formData'    : { 'type' : 'temp' },
+        'onUploadSuccess' : function(file, data,response) {
+            $('#background-preview').html('<a href="{{ path('VorterixBackendBundle_removeImage') }}">Eliminar y cambiar</a>\n\
+                                           <img src="{{ asset('uploads/temp/') }}' + data +'" />');
+            $('#backgroundImage').val(data);
+        }
+    });
+    
+    $('#image2_upload').uploadify({
+        'auto'        : false,
+        'swf'         : '{{ asset('bundles/vorterixbackend/swf/uploadify.swf') }}',
+        'uploader'    : '{{ url('VorterixBackendBundle_ajupload') }}',
+        'fileObjName' : 'the_file',
+        'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
+        'multi'       : false,
+        'buttonText' : 'Browse',
+        'formData'    : { 'type' : 'temp' },
+        'onUploadSuccess' : function(file, data,response) {
+            $('#image2-preview').html('<a href="{{ path('VorterixBackendBundle_removeImage') }}">Eliminar y cambiar</a> \n\
+                                       <img src="{{ asset('uploads/temp/') }}' + data +'" />');
+            $('#image2').val(data);
+        }
+    });
+});
+</script>
+{% endblock %}
+{% block title %}Vorterix :: Streaming{% endblock %}
+{% block section_title %}Vorterix :: Streaming{% endblock %}
+{% block content %} 
+<form name="streaming_form" action="{{ url('VorterixBackendBundle_streaming_save') }}" method="post">
+    <div class="col-md-8">
+        <div class="box box-solid box-success">
+            <div class="box-header">
+                <h3 class="box-title">Streaming Info</h3>
+            </div>
+            <input type="hidden" name="streaming_id" value="{% if streaming is not empty %}{{ streaming.id }}{% endif %}" />
+            <div class="box-body">
+                <div class="form-group">
+                    <input class="form-control input-lg" name="streaming_name" type="text" value="{% if streaming is not empty %}{{ streaming.name }}{% endif %}" placeholder="Nombre Streaming">
+                </div>
+                <div class="form-group">
+                    <input class="form-control input-lg" name="main_streaming" type="text" value="{% if streaming is not empty %}{{ streaming.mainStreaming }}{% endif %}" placeholder="Streaming Url">
+                </div>
+                <div class="form-group">
+                    <input class="form-control input-lg" name="twitter_hashtag" type="text" value="{% if streaming is not empty %}{{ streaming.hashtag }}{% endif %}" placeholder="Twitter Hashtag">
+                </div>
+                <div class="form-group">
+                    <input class="form-control input-lg" name="twitter_feed" type="text" value="{% if streaming is not empty %}{{ streaming.twFeed }}{% endif %}" placeholder="Twitter Feed">
+                </div>
+                <div class="form-group">
+                    <input class="form-control input-lg" name="cam1_url" type="text" value="{% if streaming is not empty %}{{ streaming.streamCam1 }}{% endif %}" placeholder="Cam 1 URL">
+                </div>
+                <div class="form-group">
+                    <input class="form-control input-lg" name="cam2_url" type="text" value="{% if streaming is not empty %}{{ streaming.streamCam2 }}{% endif %}" placeholder="Cam 2 URL">
+                </div>
+                <div class="form-group">
+                    <input class="form-control input-lg" name="cam3_url" type="text" value="{% if streaming is not empty %}{{ streaming.streamCam3 }}{% endif %}" placeholder="Cam 3 URL">
+                </div>
+                <div class="form-group">
+                    <input class="form-control input-lg" name="cam4_url" type="text" value="{% if streaming is not empty %}{{ streaming.streamCam4 }}{% endif %}" placeholder="Cam 4 URL">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success btn-lg">Guardar Transmisi&oacute;n</button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="box box-solid box-danger">
+            <div class="box-header">
+                <h3 class="box-title">Imagen Background</h3>
+            </div>
+            <div class="box-body">
+                <div class="image-upload-container">
+                   
+                    <div id="queue"></div>
+                    <input id="background_upload" name="background_upload" type="file" multiple="true">
+                    <a href="javascript:$('#background_upload').uploadify('upload','*')">Subir Archivos</a>
+                    <input type="hidden" name="backgroundImage" id="backgroundImage" value="{% if streaming is not empty %}{{ streaming.background }}{% endif %}" />
+                    <div id="background-preview" class="preview">
+                        {% if streaming is not empty and streaming.background is not empty %}
+                        <img src="{{ asset('uploads/streaming/') }}{{ streaming.background }}" />
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="box box-solid box-danger">
+            <div class="box-header">
+                <h3 class="box-title">Imagen 2</h3>
+            </div>
+            <div class="box-body">
+                <div class="image-upload-container">
+                    <div id="queue"></div>
+                    <input id="image2_upload" name="image2_upload" type="file" multiple="true">
+                    <a href="javascript:$('#image2_upload').uploadify('upload','*')">Subir Archivos</a>
+                    <input type="hidden" name="image2" id="image2" value="{% if streaming is not empty %}{{ streaming.imagen }}{% endif %}" />
+                    <div id="image2-preview" class="preview">
+                        {% if streaming is not empty and streaming.imagen is not empty %}
+                        <img src="{{ asset('uploads/streaming/') }}{{ streaming.imagen }}" />
+                        {% endif %}
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+ </form>
+{% endblock %}

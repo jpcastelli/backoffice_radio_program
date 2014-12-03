@@ -202,3 +202,23 @@ VorterixBackendBundle_top_removeImage:
 VorterixBackendBundle_top_list:
     path:     backend/top/list/{id}
     defaults: { _controller: VorterixBackendBundle:Top:list, id : null }
+    
+VorterixBackendBundle_streaming:
+    path:     backend/streaming
+    defaults: { _controller: VorterixBackendBundle:Streaming:index }
+    
+VorterixBackendBundle_streaming_new:
+    path:     backend/streaming/new
+    defaults: { _controller: VorterixBackendBundle:Streaming:new }
+    
+VorterixBackendBundle_streaming_edit:
+    path:     backend/streaming/edit/{id}
+    defaults: { _controller: VorterixBackendBundle:Streaming:edit, id : null }
+    
+VorterixBackendBundle_streaming_delete:
+    path:     backend/streaming/delete/{id}
+    defaults: { _controller: VorterixBackendBundle:Streaming:delete, id : null }
+
+VorterixBackendBundle_streaming_save:
+    path:     backend/streaming/save
+    defaults: { _controller: VorterixBackendBundle:Streaming:save }
