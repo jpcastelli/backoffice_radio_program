@@ -52,9 +52,9 @@ $(function() {
                     </tr>
                     {% for highlight in highlights %}
                     <tr>
-                        <td>{{ highlight.id }}</td>
+                        <td><a href="{{ url('VorterixBackendBundle_highlight_edit') }}/{{ highlight.id }}">{{ highlight.id }}</a></td>
                         <td></td>
-                        <td>{{ highlight.title }}</td>
+                        <td><a href="{{ url('VorterixBackendBundle_highlight_edit') }}/{{ highlight.id }}">{{ highlight.title }}</a></td>
                         <td>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-default">Action</button>

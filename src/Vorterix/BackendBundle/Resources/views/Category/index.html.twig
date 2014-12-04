@@ -36,7 +36,7 @@
                     <tr>
                         <td>{{ category.id }}</td>
                         <td>{% if category.cover %}<img src="{{asset('uploads/categories/cover/') }}{{ category.cover }}" width="70" height="70" />{% endif %}
-                        <td>{{ category.name }}</td>
+                        <td><a href="{{ url('VorterixBackendBundle_category_edit') }}/{{ category.id }}">{{ category.name }}</a></td>
                         <td>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-default">Action</button>

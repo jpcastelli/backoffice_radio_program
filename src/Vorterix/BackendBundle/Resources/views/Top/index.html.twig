@@ -26,9 +26,9 @@
                     </tr>
                     {% for top in tops %}
                     <tr>
-                        <td>{{ top.id }}</td>
+                        <td><a href="{{ url('VorterixBackendBundle_top_edit') }}/{{ top.id }}">{{ top.id }}</a></td>
                         <td></td>
-                        <td>{{ top.title }}</td>
+                        <td><a href="{{ url('VorterixBackendBundle_top_edit') }}/{{ top.id }}">{{ top.title }}</a></td>
                         <td>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-default">Action</button>

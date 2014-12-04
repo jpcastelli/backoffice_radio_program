@@ -35,9 +35,9 @@
                     </tr>
                     {% for section in sections %}
                     <tr>
-                        <td>{{ section.id }}</td>
+                        <td><a href="{{ url('VorterixBackendBundle_section_edit') }}/{{ section.id }}">{{ section.id }}</a></td>
                         <td>{% if section.cover %}<img src="{{ asset('uploads/section/cover/') }}{{ section.cover }}" width="70" height="70" />{% endif %}
-                        <td>{{ section.name }}</td>
+                        <td><a href="{{ url('VorterixBackendBundle_section_edit') }}/{{ section.id }}">{{ section.name }}</a></td>
                         <td>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-default">Action</button>

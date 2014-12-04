@@ -25,8 +25,8 @@
                     </tr>
                     {% for gallery in galleries %}
                     <tr>
-                        <td>{{ gallery.id }}</td>
-                        <td>{{ gallery.name }}</td>
+                        <td><a href="{{ url('VorterixBackendBundle_gallery_edit') }}/{{ gallery.id }}">{{ gallery.id }}</a></td>
+                        <td><a href="{{ url('VorterixBackendBundle_gallery_edit') }}/{{ gallery.id }}">{{ gallery.name }}</a></td>
                         <td>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-default">Action</button>
