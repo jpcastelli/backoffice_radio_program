@@ -138,8 +138,14 @@ class PostController extends Controller
     
         $em   = $this->getDoctrine()->getEntityManager();
         $post = $em->getRepository($this->repository)->find($id);
+        $category = $post->getCategory(); 
+        $category_id = $category->getId();
+        
         $em->remove($post);
         $em->flush();
+        
+        $this->generateAction($category_id);
+        $this->generateAction(0);
         
         $this->get('session')->getFlashBag()->add('success','Perfecto! El post ha sido eliminado exitosamente');
         return $this->redirect($this->generateUrl('VorterixBackendBundle_post', array()));
