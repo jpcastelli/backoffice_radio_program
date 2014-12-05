@@ -35,9 +35,23 @@ $(function(){
         'buttonText' : 'Browse',
         'formData'    : { 'type' : 'temp' },
         'onUploadSuccess' : function(file, data,response) {
-            $('#image2-preview').html('<a href="{{ path('VorterixBackendBundle_removeImage') }}">Eliminar y cambiar</a> \n\
-                                       <img src="{{ asset('uploads/temp/') }}' + data +'" />');
+            $('#image2-preview').html('<img src="{{ asset('uploads/temp/') }}' + data +'" />');
             $('#image2').val(data);
+        }
+    });
+    
+    $('#thumb_upload').uploadify({
+        'auto'        : false,
+        'swf'         : '{{ asset('bundles/vorterixbackend/swf/uploadify.swf') }}',
+        'uploader'    : '{{ url('VorterixBackendBundle_ajupload') }}',
+        'fileObjName' : 'the_file',
+        'fileTypeExts' : '*.jpg; *.jpeg; *.png; *.gif',
+        'multi'       : false,
+        'buttonText' : 'Browse',
+        'formData'    : { 'type' : 'temp' },
+        'onUploadSuccess' : function(file, data,response) {
+            $('#thumb-preview').html('<img src="{{ asset('uploads/temp/') }}' + data +'" />');
+            $('#thumb').val(data);
         }
     });
 });
@@ -123,7 +137,26 @@ $(function(){
                         {% endif %}
                     </div>
                 </div>
-                
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="box box-solid box-danger">
+            <div class="box-header">
+                <h3 class="box-title">Thumb</h3>
+            </div>
+            <div class="box-body">
+                <div class="image-upload-container">
+                    <div id="queue"></div>
+                    <input id="thumb_upload" name="thumb_upload" type="file" multiple="true">
+                    <a href="javascript:$('#thumb_upload').uploadify('upload','*')">Subir Archivos</a>
+                    <input type="hidden" name="thumb" id="thumb" value="{% if streaming is not empty %}{{ streaming.thumb }}{% endif %}" />
+                    <div id="thumb-preview" class="preview">
+                        {% if streaming is not empty and streaming.thumb is not empty %}
+                        <img src="{{ asset('uploads/streaming/') }}{{ streaming.thumb }}" />
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

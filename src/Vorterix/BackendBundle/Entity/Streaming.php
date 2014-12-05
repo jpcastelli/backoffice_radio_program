@@ -41,6 +41,13 @@ class Streaming
      * @ORM\Column(name="imagen", type="string", length=255, nullable=true)
      */
     private $imagen;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="thumb", type="string", length=255, nullable=true)
+     */
+    private $thumb;
 
     /**
      * @var string
@@ -450,5 +457,28 @@ class Streaming
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set thumb
+     *
+     * @param string $thumb
+     * @return Streaming
+     */
+    public function setThumb($thumb)
+    {
+        $this->thumb = $thumb;
+
+        return $this;
+    }
+
+    /**
+     * Get thumb
+     *
+     * @return string 
+     */
+    public function getThumb()
+    {
+        return $this->thumb;
     }
 }

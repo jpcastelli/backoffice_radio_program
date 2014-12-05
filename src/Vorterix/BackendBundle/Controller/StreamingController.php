@@ -52,6 +52,7 @@ class StreamingController extends Controller
         $mainStreaming = $request->request->get('main_streaming');
         $background    = $request->request->get('backgroundImage');
         $image2        = $request->request->get('image2');
+        $thumb         = $request->request->get('thumb');
         $hashtag       = $request->request->get('twitter_hashtag');
         $twFeed        = $request->request->get('twitter_feed');
         $streamCam1    = $request->request->get('cam1_url');
@@ -71,6 +72,7 @@ class StreamingController extends Controller
         $streaming->setMainStreaming($mainStreaming);
         $streaming->setName($name);
         $streaming->setImagen($image2);
+        $streaming->setThumb($thumb);
         $streaming->setHashtag($hashtag);
         $streaming->setTwFeed($twFeed);
         $streaming->setStreamCam1($streamCam1);
@@ -87,6 +89,11 @@ class StreamingController extends Controller
             $streaming->setImagen($image2);
         else
             $streaming->setImagen(null);
+        
+        if($thumb && $this->moveFiles($thumb))
+            $streaming->setThumb($thumb);
+        else
+            $streaming->setThumb(null);
         
         $em->persist($streaming);
         $em->flush();
@@ -176,6 +183,7 @@ class StreamingController extends Controller
             $arrStreamings[$counter]['name']          = $streaming->getName();
             $arrStreamings[$counter]['background']    = $streaming->getBackground();
             $arrStreamings[$counter]['image2']        = $streaming->getImagen();
+            $arrStreamings[$counter]['thumb']         = $streaming->getThumb();
             $arrStreamings[$counter]['hash']          = $streaming->getHashtag();
             $arrStreamings[$counter]['feed']          = $streaming->getTwFeed();
             $arrStreamings[$counter]['cam1Url']       = $streaming->getStreamCam1();
