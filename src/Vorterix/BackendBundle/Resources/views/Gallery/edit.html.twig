@@ -130,6 +130,8 @@
                 
                 $("#images-list").append('<div class="image-module">'+
                                      '<a href="'+cover_name+'" class="remove-element"></a>'+
+                                     '<img src="{{ asset('bundles/vorterixbackend/images/vorterix.gif') }}" width="100" />'+
+                                     '<textarea name="description-video-gallery[]" class="form-control" rows="3" placeholder="Descripcion"></textarea>'+
                                      '<input name="name-video-gallery[]" class="form-control" type="text" readOnly value="'+video+'" />' +
                                      '</div>');
             }
@@ -140,6 +142,8 @@
         $('#audio').click(function(){
             $('#video-upload-container').toggle();
         });
+        
+        $('#video-upload-container').toggle();
         
         $('#file_tree').fileTree({ root: '/', script:'{{ url('VorterixBackendBundle_FileTree') }}' }, function(file) { 
             $('#post_video').val(file)
@@ -250,6 +254,8 @@
                     <textarea name="description-video-gallery[]" class="form-control" rows="3" placeholder="Descripcion">{{ video.description }}</textarea>
                     <input name="cover-video-gallery[]" type="hidden" value="{{ video.cover }}" />
                     {% endif %}
+                    <img src="{{ asset("bundles/vorterixbackend/images/vorterix.gif") }}" width="100" />
+                    <textarea name="description-video-gallery[]" class="form-control" rows="3" placeholder="Descripcion">{{ video.description }}</textarea>
                     <input type="hidden" name="video-gallery-id[]" value="{{ video.id }}" />
                     <input name="name-video-gallery[]" class="form-control" type="text" readOnly value="{{ video.name }}" />
                 </div>

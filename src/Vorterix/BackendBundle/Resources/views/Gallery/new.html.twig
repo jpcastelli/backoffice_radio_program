@@ -105,6 +105,8 @@
                 
                 $("#images-list").append('<div class="image-module">'+
                                      '<a href="'+cover_name+'" class="remove-element"></a>'+
+                                     '<img src="{{ asset('bundles/vorterixbackend/images/vorterix.gif') }}" width="100" />'+
+                                     '<textarea name="description-video-gallery[]" class="form-control" rows="3" placeholder="Descripcion"></textarea>'+
                                      '<input name="name-video-gallery[]" class="form-control" type="text" readOnly value="'+video+'" />' +
                                      '</div>');
             }

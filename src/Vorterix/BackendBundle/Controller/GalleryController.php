@@ -39,8 +39,18 @@ class GalleryController extends Controller
         $videosCover       = $request->request->get('cover-video-gallery');
         $videosDescription = $request->request->get('description-video-gallery');
         $videosName        = $request->request->get('name-video-gallery');
-        $videosID           = $request->request->get('video-gallery-id');
+        $videosID          = $request->request->get('video-gallery-id');
+        $arrVideos         = Array();
+        $index             = 0;
  
+        foreach($videosName as $name){
+            $arrVideos[$index]['id']          = (! empty($videosID[$index])) ? $videosID[$index] : '';
+            $arrVideos[$index]['cover']       = (! empty($videosCover[$index])) ? $videosCover[$index] : null;
+            $arrVideos[$index]['description'] = $videosDescription[$index];
+            $arrVideos[$index]['name']        = $name;
+            $index++;
+        }
+        
         if($request->request->get('gallery_id')){
             $id            = $request->request->get('gallery_id');
             $em            = $this->getDoctrine()->getManager();
@@ -53,7 +63,7 @@ class GalleryController extends Controller
  
         $gallery->setName($galleryName);
         $gallery->setAudio($audio);
-        $this->saveVideosGallery($gallery, $videosCover, $videosDescription, $videosName, $videosID, $audio);
+        $this->saveVideosGallery($gallery, $arrVideos, $audio);
         $this->saveImagesGallery($gallery, $images, $imagesDescription, $imagesID);
         
         $em->persist($gallery);
@@ -70,35 +80,20 @@ class GalleryController extends Controller
      * @param type $videosDescription
      * @param type $videosName
      */
-    private function saveVideosGallery($gallery, $videosCover, $videosDescription, $videosName, $videosID, $isAudio){
-        
+     private function saveVideosGallery($gallery, $arrMedia, $isAudio){
+ 
         $em = $this->getDoctrine()->getManager();
-        if(count($videosName) > 0 && count($videosName) > count($videosID)){
-            $counter = 0;
-            foreach($videosName as $videoName){
-                if(!count($videosID) || !array_key_exists($counter, $videosID)){
-                    if(!$isAudio){
-                        if(file_exists(__DIR__.'/../../../../web/uploads/temp/'.$videoCover[$counter])){
-                            $file = new \Symfony\Component\HttpFoundation\File\File(__DIR__.'/../../../../web/uploads/temp/'.$videoCover[$counter]);           
-                            $file->move($this->getPath('video'), $videoCover[$counter]);
-                        }
-                    }
-                    
-                    $video = new Video();
-                    if(!$isAudio){
-                        $video->setCover($videoCover);
-                        $video->setDescription($videosDescription[$counter]);
-                    }
-                    $video->setName($videosName[$counter]);
-                    $video->setGallery($gallery);
-                    $gallery->addVideo($video);
-                }
-                $counter++;
-            }
-            if(isset($video))
-                $em->persist($video);
+        foreach($arrMedia as $media){
+            $mediaObj = (! empty($media['id'])) ? $em->getRepository('VorterixBackendBundle:Video')->find($media['id']) : new Video();
+
+            $mediaObj->setCover(($isAudio) ? null : $media['cover']);
+            $mediaObj->setDescription($media['description']);
+            $mediaObj->setName($media['name']);
+            $mediaObj->setGallery($gallery);
+            $gallery->addVideo($mediaObj);
         }
-        return false;
+        $em->persist($mediaObj);
+        return;
     }
     
     /**
