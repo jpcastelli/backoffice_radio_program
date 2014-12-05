@@ -39,6 +39,13 @@ class Gallery
     protected $images;
     
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="audio", type="boolean")
+     */
+    protected $audio;
+    
+    /**
      * Constructor
      */
     public function __construct()
@@ -144,5 +151,28 @@ class Gallery
     public function getVideos()
     {
         return $this->videos;
+    }
+
+    /**
+     * Set audio
+     *
+     * @param boolean $audio
+     * @return Gallery
+     */
+    public function setAudio($audio)
+    {
+        $this->audio = $audio;
+
+        return $this;
+    }
+
+    /**
+     * Get audio
+     *
+     * @return boolean 
+     */
+    public function getAudio()
+    {
+        return $this->audio;
     }
 }

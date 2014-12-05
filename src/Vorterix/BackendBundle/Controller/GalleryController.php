@@ -29,10 +29,11 @@ class GalleryController extends Controller
      */
     public function saveAction(Request $request){
         //Gallery images requests.
-        $galleryName       = $request->request->get('gallery-name');
+        $galleryName       = $request->request->get('gallery-name'); 
+        $audio             = ($request->request->get('audio-gallery') == 'on') ? 1 : 0;
         $images            = $request->request->get('image-gallery');
         $imagesDescription = $request->request->get('description-gallery');
-        $imagesID           = $request->request->get('image-gallery-id');
+        $imagesID          = $request->request->get('image-gallery-id');
 
         //Gallery videos requests.
         $videosCover       = $request->request->get('cover-video-gallery');
@@ -51,6 +52,7 @@ class GalleryController extends Controller
         $em = $this->getDoctrine()->getManager();
  
         $gallery->setName($galleryName);
+        $gallery->setAudio($audio);
         $this->saveVideosGallery($gallery, $videosCover, $videosDescription, $videosName, $videosID);
         $this->saveImagesGallery($gallery, $images, $imagesDescription, $imagesID);
         

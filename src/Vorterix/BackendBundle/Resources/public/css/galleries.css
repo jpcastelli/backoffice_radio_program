@@ -30,3 +30,7 @@ a.remove-element{
     height: 16px;
     float: right;
 }
+
+.checkbox{
+    margin-left: 20px;
+}
