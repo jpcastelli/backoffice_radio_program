@@ -51,7 +51,8 @@
                                                 '<input type="hidden" id="chosen-cover" name="chosen-cover" value="'+data+'" />');
             },
             'onUploadComplete': function(){
-                $('#video-upload-container').toggle();
+                if($('#audio').is(":checked"))
+                    $('#video-upload-container').toggle();
             }
         });
         
@@ -117,15 +118,26 @@
             var cover_name = $('#chosen-cover').val();
             var video      = $('#post_video').val();
             
-            $("#images-list").append('<div class="video-module">'+
+            if(!$('#audio').is(":checked")){
+            $("#images-list").append('<div class="image-module">'+
                                      '<a href="'+cover_name+'" class="remove-element"></a>'+
                                      '<img src="{{ asset('uploads/temp/') }}' + cover_name +'" width="100" />'+
                                      '<textarea name="description-video-gallery[]" class="form-control" rows="3" placeholder="Descripcion"></textarea>'+
                                      '<input name="cover-video-gallery[]" type="hidden" value="'+cover_name+'" />'+
                                      '<input name="name-video-gallery[]" class="form-control" type="text" readOnly value="'+video+'" />' +
                                      '</div>');
-
+            } else {
+                
+                $("#images-list").append('<div class="image-module">'+
+                                     '<a href="'+cover_name+'" class="remove-element"></a>'+
+                                     '<input name="name-video-gallery[]" class="form-control" type="text" readOnly value="'+video+'" />' +
+                                     '</div>');
+            }
             $('#uploaded-image').html('');
+            $('#video-upload-container').toggle();
+        });
+        
+        $('#audio').click(function(){
             $('#video-upload-container').toggle();
         });
         
@@ -149,7 +161,7 @@
                 <input type="text" name="gallery-name" id="gallery-name" value="{{ gallery.name }}" class="form-control input-lg" placeholder="Nombre Galeria" /><br />
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" {% if gallery.audio %}{{ "checked" }}{% endif %} name="audio-gallery"/>
+                        <input type="checkbox" {% if gallery.audio %}{{ "checked" }}{% endif %}  id="audio" name="audio-gallery"/>
                         Galer&iacute;a de audio?
                     </label>
                 </div>
@@ -233,9 +245,11 @@
             {% for video in videos %}
                 <div class="video-module">
                     <a href="{{ video.cover }}" id="{{ video.id }}" class="remove-element"></a>
+                    {% if not gallery.audio %}
                     <img src="{{ asset("uploads/video/cover/") }}{{ video.cover }}" width="100" />
                     <textarea name="description-video-gallery[]" class="form-control" rows="3" placeholder="Descripcion">{{ video.description }}</textarea>
                     <input name="cover-video-gallery[]" type="hidden" value="{{ video.cover }}" />
+                    {% endif %}
                     <input type="hidden" name="video-gallery-id[]" value="{{ video.id }}" />
                     <input name="name-video-gallery[]" class="form-control" type="text" readOnly value="{{ video.name }}" />
                 </div>

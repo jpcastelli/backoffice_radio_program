@@ -53,7 +53,7 @@ class GalleryController extends Controller
  
         $gallery->setName($galleryName);
         $gallery->setAudio($audio);
-        $this->saveVideosGallery($gallery, $videosCover, $videosDescription, $videosName, $videosID);
+        $this->saveVideosGallery($gallery, $videosCover, $videosDescription, $videosName, $videosID, $audio);
         $this->saveImagesGallery($gallery, $images, $imagesDescription, $imagesID);
         
         $em->persist($gallery);
@@ -70,24 +70,28 @@ class GalleryController extends Controller
      * @param type $videosDescription
      * @param type $videosName
      */
-    private function saveVideosGallery($gallery, $videosCover, $videosDescription, $videosName, $videosID){
+    private function saveVideosGallery($gallery, $videosCover, $videosDescription, $videosName, $videosID, $isAudio){
         
         $em = $this->getDoctrine()->getManager();
         if(count($videosName) > 0 && count($videosName) > count($videosID)){
             $counter = 0;
-            foreach($videosCover as $videoCover){
-                if(!count($videosID) || !array_key_exists($counter, $videosID)){ 
-                    if(file_exists(__DIR__.'/../../../../web/uploads/temp/'.$videoCover)){ 
-                        $file = new \Symfony\Component\HttpFoundation\File\File(__DIR__.'/../../../../web/uploads/temp/'.$videoCover);           
-                        $file->move($this->getPath('video'), $videoCover);
-
-                        $video = new Video();          
+            foreach($videosName as $videoName){
+                if(!count($videosID) || !array_key_exists($counter, $videosID)){
+                    if(!$isAudio){
+                        if(file_exists(__DIR__.'/../../../../web/uploads/temp/'.$videoCover[$counter])){
+                            $file = new \Symfony\Component\HttpFoundation\File\File(__DIR__.'/../../../../web/uploads/temp/'.$videoCover[$counter]);           
+                            $file->move($this->getPath('video'), $videoCover[$counter]);
+                        }
+                    }
+                    
+                    $video = new Video();
+                    if(!$isAudio){
                         $video->setCover($videoCover);
                         $video->setDescription($videosDescription[$counter]);
-                        $video->setName($videosName[$counter]);
-                        $video->setGallery($gallery);
-                        $gallery->addVideo($video);
                     }
+                    $video->setName($videosName[$counter]);
+                    $video->setGallery($gallery);
+                    $gallery->addVideo($video);
                 }
                 $counter++;
             }
@@ -146,7 +150,7 @@ class GalleryController extends Controller
      */
     public function deleteAction($id){
     
-        $em   = $this->getDoctrine()->getEntityManager();
+        $em   = $this->getDoctrine()->getManager();
         $gallery = $em->getRepository($this->repository)->find($id);
         $images = $gallery->getImages();
         $videos = $gallery->getVideos();
@@ -186,7 +190,7 @@ class GalleryController extends Controller
      * @return type
      */
      public function editAction($id){
-         $em     = $this->getDoctrine()->getEntityManager();
+         $em     = $this->getDoctrine()->getManager();
         $gallery = $em->getRepository($this->repository)->find($id);
         $images  = $gallery->getImages();
         $videos  = $gallery->getVideos();

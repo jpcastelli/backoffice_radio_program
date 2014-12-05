@@ -51,7 +51,8 @@
                                                 '<input type="hidden" id="chosen-cover" name="chosen-cover" value="'+data+'" />');
             },
             'onUploadComplete': function(){
-                $('#video-upload-container').toggle();
+                if($('#audio').is(":checked"))
+                  $('#video-upload-container').toggle();
             }
         });
         
@@ -92,6 +93,7 @@
             var cover_name = $('#chosen-cover').val();
             var video      = $('#post_video').val();
             
+            if(!$('#audio').is(":checked")){
             $("#images-list").append('<div class="image-module">'+
                                      '<a href="'+cover_name+'" class="remove-element"></a>'+
                                      '<img src="{{ asset('uploads/temp/') }}' + cover_name +'" width="100" />'+
@@ -99,11 +101,20 @@
                                      '<input name="cover-video-gallery[]" type="hidden" value="'+cover_name+'" />'+
                                      '<input name="name-video-gallery[]" class="form-control" type="text" readOnly value="'+video+'" />' +
                                      '</div>');
-
+            } else {
+                
+                $("#images-list").append('<div class="image-module">'+
+                                     '<a href="'+cover_name+'" class="remove-element"></a>'+
+                                     '<input name="name-video-gallery[]" class="form-control" type="text" readOnly value="'+video+'" />' +
+                                     '</div>');
+            }
             $('#uploaded-image').html('');
             $('#video-upload-container').toggle();
         });
         
+        $('#audio').click(function(){
+            $('#video-upload-container').toggle();
+        });
         
         $('#file_tree').fileTree({ root: '/', script:'{{ url('VorterixBackendBundle_FileTree') }}' }, function(file) { 
         $('#post_video').val(file)
@@ -122,7 +133,7 @@
                 <input type="text" name="gallery-name" id="gallery-name" class="form-control input-lg" placeholder="Nombre Galeria" /><br />
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" name="audio-gallery"/>
+                        <input type="checkbox" id="audio" name="audio-gallery"/>
                         Galer&iacute;a de audio?
                     </label>
                 </div>
