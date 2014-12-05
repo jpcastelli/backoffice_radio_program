@@ -116,6 +116,7 @@ class PostController extends Controller
         
         $this->generateAction($category_id);
         $this->generateAction(0);
+        $this->getNotasXPrograma();
         
         $this->get('session')->getFlashBag()->add('success','Perfecto! El post ha sido guardado exitosamente');
         return $this->redirect($this->generateUrl('VorterixBackendBundle_post', array()));
@@ -282,23 +283,29 @@ class PostController extends Controller
         $postsOpinion   = $this->getPostsByCategory($opinionID);
         $postsCartelera = $this->getPostsByCategory($carteleraID); 
         $notasxbloque   = $this->getNotasxBloque();
+        $ultimaNota     = $this->getUltimaNota();
 
         $postsBlock = 1;
         $postCount = 1;
         $postxblock = array();
         
         foreach($posts as $post){
-
-            if($postsBlock <= $this->maxPostsBlock){
-                if($postCount <= $notasxbloque[$postsBlock]){
-                    $postxblock["notasbloque$postsBlock"][] = $post;
-                    $postCount++;
-                }else{
-                    
-                    $postCount=1;
-                    $postsBlock++;
-                    $postxblock["notasbloque$postsBlock"][] = $post;
-                    $postCount++;
+            if($post['id'] != $ultimaNota[0]['id']){
+                if($postsBlock <= $this->maxPostsBlock){
+                    if($ultimaNota[0]['id'])
+                    if($postCount <= $notasxbloque[$postsBlock]){
+                        if($post['id'] != $ultimaNota[0]['id']){
+                            $postxblock["notasbloque$postsBlock"][] = $post;
+                        }
+                        $postCount++;
+                    }else{
+                        $postCount=1;
+                        $postsBlock++;
+                        if($post['id'] != $ultimaNota[0]['id']){
+                            $postxblock["notasbloque$postsBlock"][] = $post;
+                        }
+                        $postCount++;
+                    }
                 }
             }
         }
@@ -307,7 +314,6 @@ class PostController extends Controller
                 Array(
                     'settings'          => $this->getSettings(),
                     'micrositios'       => $this->getMicroSites(),
-                    'notasxprog'        => $this->getNotasxProg(),
                     'ultimanota'        => $this->getUltimaNota(),
                     'notasdestacadas'   => $this->getNotaDestacada(),
                     $postxblock,
@@ -325,12 +331,12 @@ class PostController extends Controller
         $path = $this->getPath($category);
         $fs->dumpFile($path, $json);
         
-        return $this->render('VorterixBackendBundle:Json:index.html.twig', array('status'=>true, 'message' => "Json Creado exitosamente"));  
+        //return $this->render('VorterixBackendBundle:Json:index.html.twig', array('status'=>true, 'message' => "Json Creado exitosamente"));  
     }
 
 
-    private function getPath($category){
-        
+    private function getPath($category){ 
+  
         $filename = $this->getJsonName($category);
         $path = __DIR__."/../../../../web/uploads/json/$filename";
         
@@ -386,6 +392,9 @@ class PostController extends Controller
             case 32: 
                 $file = 'dobleonada.json';
             break;
+            case 41:
+                $file = 'notasxprograma.json';
+                break;
         }
 
         return $file;
@@ -416,7 +425,7 @@ class PostController extends Controller
     }
 
     
-    private function getNotasxProg(){
+    private function getNotasXPrograma(){
          
         $em         = $this->getDoctrine()->getManager();
         $categories = $em->getRepository('VorterixBackendBundle:Category')->findAll();
@@ -436,7 +445,16 @@ class PostController extends Controller
             }
         }
         
-        return $programas;
+        $json = json_encode(
+                Array(
+                    'notasxprograma' => $programas
+                )
+            );
+ 
+        $fs = new \Symfony\Component\Filesystem\Filesystem();
+        $path = $this->getPath(41);
+        $fs->dumpFile($path, $json);
+        return;
     }
     
     private function getUltimaNota(){ 
