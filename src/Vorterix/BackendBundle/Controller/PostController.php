@@ -29,10 +29,13 @@ class PostController extends Controller
     
     public function saveAction(Request $request){
         
+        $em   = $this->getDoctrine()->getManager();
+        $usr  = $this->get('security.context')->getToken()->getUser();
+        $user = $em->getRepository('VorterixBackendBundle:User')->find($usr->getId());
+        
         //if post id exists is an update
         if($request->request->get('post_id')){
             $id   = $request->request->get('post_id');
-            $em   = $this->getDoctrine()->getManager();
             $post = $em->getRepository('VorterixBackendBundle:Post')->find($id);
             $postTags = $post->getTags();
             
@@ -86,7 +89,10 @@ class PostController extends Controller
         $post->setCover($cover);
         $post->setMainVideo($video);
         $post->setComments($comments);
-        $post->setCreateD(new \DateTime("now"));
+        $post->setUser($user);
+        if(!$id){//if Edit mode will not replace date.
+            $post->setCreateD(new \DateTime("now"));
+        }
         $post->setPublishD($progD);
         
         /** @todo Improve saving tags after editing. */

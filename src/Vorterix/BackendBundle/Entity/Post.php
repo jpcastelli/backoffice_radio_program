@@ -91,6 +91,11 @@ class Post
     private $top;
     
     /**
+     * @ORM\ManyToOne(targetEntity="User")
+     */
+    private $user;
+    
+    /**
      * @var boolean
      *
      * @ORM\Column(name="status", type="boolean")
@@ -500,5 +505,28 @@ class Post
     public function getTop()
     {
         return $this->top;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \Vorterix\BackendBundle\Entity\User $user
+     * @return Post
+     */
+    public function setUser(\Vorterix\BackendBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \Vorterix\BackendBundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }
