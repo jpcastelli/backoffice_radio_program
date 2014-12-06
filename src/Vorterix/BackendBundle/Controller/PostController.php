@@ -286,8 +286,8 @@ class PostController extends Controller
             $posts = $this->getPostsByCategory($category, 1, $this->totalPosts);  
         }
  
-        $postsOpinion   = $this->getPostsByCategory($opinionID);
-        $postsCartelera = $this->getPostsByCategory($carteleraID); 
+        $this->generateOpinionJson($opinionID);
+        $this->generateCarteleraJson($carteleraID); 
         $notasxbloque   = $this->getNotasxBloque();
         $ultimaNota     = $this->getUltimaNota();
 
@@ -325,8 +325,6 @@ class PostController extends Controller
                     'bannertop'         => $this->getBannerTop(),
                     'notasbloqueleidas'    => $this->getNotasBloqueLeidas(),
                     'videosmasvistos'      => $this->getVideosMasVistos(),
-                    'postsCartelera'       => $postsCartelera,
-                    'postsOpinion'         => $postsOpinion,
                     'numColumnasDestacado' => $this->getNumeroColumnasDestacado()
                 )
             );
@@ -338,6 +336,19 @@ class PostController extends Controller
         //return $this->render('VorterixBackendBundle:Json:index.html.twig', array('status'=>true, 'message' => "Json Creado exitosamente"));  
     }
 
+    private function generateOpinionJson($opinionID){
+        $opinionPosts = $this->getPostsByCategory($opinionID);
+        $json = json_encode( array( 'opinion' => $opinionPosts ) );
+        $fs   = new \Symfony\Component\Filesystem\Filesystem();
+        $fs->dumpFile(__DIR__."/../../../../web/uploads/json/opinion.json", $json);
+    }
+    
+    private function generateCarteleraJson($carteleraID){
+        $carteleraPosts = $this->getPostsByCategory($carteleraID);
+        $json = json_encode( array( 'cartelera' => $carteleraPosts ) );
+        $fs   = new \Symfony\Component\Filesystem\Filesystem();
+        $fs->dumpFile(__DIR__."/../../../../web/uploads/json/cartelera.json", $json);
+    }
 
     private function getPath($category){ 
   
