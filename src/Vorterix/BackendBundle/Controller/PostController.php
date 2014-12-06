@@ -321,7 +321,6 @@ class PostController extends Controller
                     'settings'          => $this->getSettings(),
                     'micrositios'       => $this->getMicroSites(),
                     'ultimanota'        => $this->getUltimaNota(),
-                    'notasdestacadas'   => $this->getNotaDestacada(),
                     $postxblock,
                     'bannertop'         => $this->getBannerTop(),
                     'notasbloqueleidas'    => $this->getNotasBloqueLeidas(),
@@ -479,26 +478,6 @@ class PostController extends Controller
                 ->getResult();
         
         return $posts;
-    }
-    
-    private function getNotaDestacada(){
-        
-        $em            = $this->getDoctrine()->getManager();
-        $highlights    = $em->getRepository('VorterixBackendBundle:Highlight')->findAll();
-        $arrHighlights = Array();
-        $counter       = 0;
-        
-        foreach($highlights as $highlight){
-            $arrHighlights[$counter]['id']            = $highlight->getId();
-            $arrHighlights[$counter]['titulo']        = $highlight->getTitle();
-            $arrHighlights[$counter]['link']          = $highlight->getLink();
-            $arrHighlights[$counter]['columnas']      = $highlight->getColumns();
-            $arrHighlights[$counter]['imagen_chica']  = $highlight->getLittleImage();
-            $arrHighlights[$counter]['imagen_grande'] = $highlight->getBigImage();
-     
-            $counter++;
-        }
-        return $arrHighlights;
     }
     
     private function getNumeroColumnasDestacado(){

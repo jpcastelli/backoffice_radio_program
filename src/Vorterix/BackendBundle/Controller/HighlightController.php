@@ -85,6 +85,8 @@ class HighlightController extends Controller
         $em->persist($highlight);
         $em->flush();
         
+        $this->generateHighlightJson();
+        
         $this->get('session')->getFlashBag()->add('success','Perfecto! El Destacado ha sido guardada exitosamente.');
         return $this->redirect($this->generateUrl('VorterixBackendBundle_highlight', array()));
     }
@@ -150,6 +152,8 @@ class HighlightController extends Controller
                         array( 'highlights' => $highlights )
                     );
         
+        $this->generateHighlightJson();
+        
         $this->get('session')->getFlashBag()->add('success','Perfecto! El Destacado ha sido eliminado exitosamente.');
         return new Response($content);
     }
@@ -203,6 +207,33 @@ class HighlightController extends Controller
         $em->flush();
         
         return new Response($key->getId());
+    }
+    
+    private function generateHighlightJson(){
+        $highlights = $this->getAllHighlightsJson();
+        $json = json_encode( array( 'destacados' => $highlights ) );
+        $fs   = new \Symfony\Component\Filesystem\Filesystem();
+        $fs->dumpFile(__DIR__."/../../../../web/uploads/json/destacados.json", $json);
+    }
+    
+    private function getAllHighlightsJson(){
+        
+        $em            = $this->getDoctrine()->getManager();
+        $highlights    = $em->getRepository('VorterixBackendBundle:Highlight')->findAll();
+        $arrHighlights = Array();
+        $counter       = 0;
+        
+        foreach($highlights as $highlight){
+            $arrHighlights[$counter]['id']            = $highlight->getId();
+            $arrHighlights[$counter]['titulo']        = $highlight->getTitle();
+            $arrHighlights[$counter]['link']          = $highlight->getLink();
+            $arrHighlights[$counter]['columnas']      = $highlight->getColumns();
+            $arrHighlights[$counter]['imagen_chica']  = $highlight->getLittleImage();
+            $arrHighlights[$counter]['imagen_grande'] = $highlight->getBigImage();
+     
+            $counter++;
+        }
+        return $arrHighlights;
     }
 
 }
