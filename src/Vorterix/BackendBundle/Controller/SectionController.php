@@ -52,10 +52,11 @@ class SectionController extends Controller
         $section->setCover($cover);
         $em->persist($section);
         $em->flush();
+  
+        $this->generateHighlightJson();
         
-        $sections = $this->getAllSections();
         $this->get('session')->getFlashBag()->add('success','Perfecto! La seccion ha sido agregada exitosamente.');
-        return $this->redirect( $this->generateUrl('VorterixBackendBundle_section', array('sections' => $sections)));
+        return $this->redirect( $this->generateUrl('VorterixBackendBundle_section', array()));
 
     }
     
@@ -78,12 +79,12 @@ class SectionController extends Controller
             unlink($path.$image);
         }
         
-        $sections = $this->getAllSections();
         $em->remove($section);
         $em->flush();
  
+        $this->generateHighlightJson();
         $this->get('session')->getFlashBag()->add('success','Perfecto! La seccion ha sido eliminada exitosamente.');
-        return $this->redirect( $this->generateUrl('VorterixBackendBundle_section', array('sections' => $sections)));
+        return $this->redirect( $this->generateUrl('VorterixBackendBundle_section', array()));
  
     }
     
@@ -147,5 +148,29 @@ class SectionController extends Controller
         $path = __DIR__.'/../../../../web/uploads/section/cover/';
                 
         return $path;
+    }
+    
+    private function generateHighlightJson(){
+        $sections = $this->getSections();
+        $json = json_encode( array( 'secciones' => $sections ) );
+        $fs   = new \Symfony\Component\Filesystem\Filesystem();
+        $fs->dumpFile(__DIR__."/../../../../web/uploads/json/secciones.json", $json);
+    }
+    
+    private function getSections(){
+        
+        $em       = $this->getDoctrine()->getManager();
+        $sections = $em->getRepository($this->repository)->findAll();
+        $arrSections = Array();
+        $counter = 0;
+        foreach($sections as $section){
+            $arrSections[$counter]['id']          = $section->getId();
+            $arrSections[$counter]['name']        = $section->getName();
+            $arrSections[$counter]['description'] = $section->getDescription();
+            $arrSections[$counter]['cover']       = $section->getCover();
+            
+            $counter++;
+        }
+        return $arrSections;
     }
 }

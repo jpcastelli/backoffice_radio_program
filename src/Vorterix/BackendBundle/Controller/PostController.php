@@ -327,7 +327,6 @@ class PostController extends Controller
                     'videosmasvistos'      => $this->getVideosMasVistos(),
                     'postsCartelera'       => $postsCartelera,
                     'postsOpinion'         => $postsOpinion,
-                    'secciones'            => $this->getSections(),
                     'numColumnasDestacado' => $this->getNumeroColumnasDestacado()
                 )
             );
@@ -586,22 +585,7 @@ class PostController extends Controller
         return $posts;
     }
     
-    private function getSections(){
-        
-        $em       = $this->getDoctrine()->getManager();
-        $sections = $em->getRepository('VorterixBackendBundle:Section')->findAll();
-        $arrSections = Array();
-        $counter = 0;
-        foreach($sections as $section){
-            $arrSections[$counter]['id']          = $section->getId();
-            $arrSections[$counter]['name']        = $section->getName();
-            $arrSections[$counter]['description'] = $section->getDescription();
-            $arrSections[$counter]['cover']       = $section->getCover();
-            
-            $counter++;
-        }
-        return $arrSections;
-    }
+    
     
     private function getCategoryIDByName($categoryName){
         $em       = $this->getDoctrine()->getManager();
