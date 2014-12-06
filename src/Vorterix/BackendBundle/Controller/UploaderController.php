@@ -23,7 +23,8 @@ class UploaderController extends Controller
         $path          = $this->getPath($type);
    
         $fileExtension = strtolower($uploadedFile->guessExtension());
-        $newFilename   = date('dmYHis').'.'.$fileExtension;
+        $t = microtime(true);
+        $newFilename   = date('YmdHis'.$t).'.'.$fileExtension;
         $uploadedFile->move($path, $newFilename);
 
         return new Response($newFilename);

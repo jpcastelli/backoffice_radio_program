@@ -143,7 +143,8 @@
             $('#video-upload-container').toggle();
         });
         
-        $('#video-upload-container').toggle();
+        if($('#audio').is(":checked"))
+            $('#video-upload-container').toggle();
         
         $('#file_tree').fileTree({ root: '/', script:'{{ url('VorterixBackendBundle_FileTree') }}' }, function(file) { 
             $('#post_video').val(file)

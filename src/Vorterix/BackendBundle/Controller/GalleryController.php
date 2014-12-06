@@ -42,14 +42,6 @@ class GalleryController extends Controller
         $videosID          = $request->request->get('video-gallery-id');
         $arrVideos         = Array();
         $index             = 0;
- 
-        foreach($videosName as $name){
-            $arrVideos[$index]['id']          = (! empty($videosID[$index])) ? $videosID[$index] : '';
-            $arrVideos[$index]['cover']       = (! empty($videosCover[$index])) ? $videosCover[$index] : null;
-            $arrVideos[$index]['description'] = $videosDescription[$index];
-            $arrVideos[$index]['name']        = $name;
-            $index++;
-        }
         
         if($request->request->get('gallery_id')){
             $id            = $request->request->get('gallery_id');
@@ -63,7 +55,17 @@ class GalleryController extends Controller
  
         $gallery->setName($galleryName);
         $gallery->setAudio($audio);
+        if(count($videosName) > 0 ){
+            foreach($videosName as $name){
+                $arrVideos[$index]['id']          = (! empty($videosID[$index])) ? $videosID[$index] : '';
+                $arrVideos[$index]['cover']       = (! empty($videosCover[$index])) ? $videosCover[$index] : null;
+                $arrVideos[$index]['description'] = $videosDescription[$index];
+                $arrVideos[$index]['name']        = $name;
+                $index++;
+            }
+        
         $this->saveVideosGallery($gallery, $arrVideos, $audio);
+        }
         $this->saveImagesGallery($gallery, $images, $imagesDescription, $imagesID);
         
         $em->persist($gallery);
