@@ -282,7 +282,7 @@ class PostController extends Controller
             $posts = $this->getAllPostsJson($excludeCategories, 1, $this->totalPosts);
         }
         else{
-            $posts = $this->getPostsByCategory($category, 1, $this->totalPosts);  
+            $posts = $this->getPostsByCategory($category, 0, $this->totalPosts);  
         }
  
         $this->generateOpinionJson($opinionID);
@@ -458,7 +458,7 @@ class PostController extends Controller
                 $programas[$index]['nice-url']      = $niceUrl;
                 $programas[$index]['cover']       = $category->getCover();
                 $programas[$index]['description'] = $category->getDescription();
-                $programas[$index]['notas']       = $this->getPostsByCategory($category->getId(), 1, 5);
+                $programas[$index]['notas']       = $this->getPostsByCategory($category->getId(), 0, 5);
                 $index++;
             }
         }
