@@ -32,7 +32,7 @@ class PostController extends Controller
         $em   = $this->getDoctrine()->getManager();
         $usr  = $this->get('security.context')->getToken()->getUser();
         $user = $em->getRepository('VorterixBackendBundle:User')->find($usr->getId());
-        
+        $id   = '';
         //if post id exists is an update
         if($request->request->get('post_id')){
             $id   = $request->request->get('post_id');
@@ -122,7 +122,6 @@ class PostController extends Controller
         
         $this->generateAction($category_id);
         $this->generateAction(0);
-        $this->getNotasXPrograma();
         
         $this->get('session')->getFlashBag()->add('success','Perfecto! El post ha sido guardado exitosamente');
         return $this->redirect($this->generateUrl('VorterixBackendBundle_post', array()));
@@ -288,6 +287,7 @@ class PostController extends Controller
  
         $this->generateOpinionJson($opinionID);
         $this->generateCarteleraJson($carteleraID); 
+        $this->generateNotasXPrograma(); 
         $notasxbloque   = $this->getNotasxBloque();
         $ultimaNota     = $this->getUltimaNota();
 
@@ -440,7 +440,7 @@ class PostController extends Controller
     }
 
     
-    private function getNotasXPrograma(){
+    private function generateNotasXPrograma(){
          
         $em         = $this->getDoctrine()->getManager();
         $categories = $em->getRepository('VorterixBackendBundle:Category')->findAll();
@@ -450,9 +450,12 @@ class PostController extends Controller
         foreach($categories as $category){
             $name = $category->getName();
             if($name != 'Opinion' && $name != 'Cartelera'){
+                $niceUrlLower = strtolower($category->getName());
+                $niceUrl      = str_replace(" ", "-", $niceUrlLower);
                 $programas[$index]['id']          = $category->getId();
                 $programas[$index]['programa']    = $category->getName();
                 $programas[$index]['jsname']      = $this->getJsonName($category->getId());
+                $programas[$index]['nice-url']      = $niceUrl;
                 $programas[$index]['cover']       = $category->getCover();
                 $programas[$index]['description'] = $category->getDescription();
                 $programas[$index]['notas']       = $this->getPostsByCategory($category->getId(), 1, 5);
@@ -460,15 +463,10 @@ class PostController extends Controller
             }
         }
         
-        $json = json_encode(
-                Array(
-                    'notasxprograma' => $programas
-                )
-            );
+        $json = json_encode( Array( 'notasxprograma' => $programas) );
  
         $fs = new \Symfony\Component\Filesystem\Filesystem();
-        $path = $this->getPath(41);
-        $fs->dumpFile($path, $json);
+        $fs->dumpFile(__DIR__."/../../../../web/uploads/json/notasxprograma.json", $json);
         return;
     }
     
@@ -480,7 +478,7 @@ class PostController extends Controller
                 ->select('c.name as programa, q.id,q.pretitle, q.title, q.shortDescription, q.description, q.cover, q.status, q.createD, q.comments')
                 ->from('VorterixBackendBundle:Post', 'q')
                 ->innerJoin('VorterixBackendBundle:Category', 'c', Join::WITH, 'q.category = c.id')
-                ->orderBy('q.publishD', 'DESC')
+                ->orderBy('q.createD', 'DESC')
                 ->where('q.status=true' )
                 ->setFirstResult( 1 )
                 ->setMaxResults( 1 )
@@ -568,7 +566,7 @@ class PostController extends Controller
                 ->createQueryBuilder()
                 ->select('q.id,q.pretitle, q.title, q.shortDescription, q.description, q.cover, q.status, q.createD, q.comments')
                 ->from('VorterixBackendBundle:Post', 'q')
-                ->orderBy('q.publishD', 'DESC')
+                ->orderBy('q.createD', 'DESC')
                 ->where('q.status=true' )
                 ->where("q.category not in ($excluded)")
                 ->setFirstResult( $offset )
@@ -587,7 +585,7 @@ class PostController extends Controller
                 ->from('VorterixBackendBundle:Post', 'q')
                 ->where('q.category = :id')
                 ->setParameter('id', $category)
-                 ->orderBy('q.publishD', 'DESC')
+                 ->orderBy('q.createD', 'DESC')
                 ->setFirstResult( $offset )
                 ->setMaxResults( $limit )
                 ->getQuery()
