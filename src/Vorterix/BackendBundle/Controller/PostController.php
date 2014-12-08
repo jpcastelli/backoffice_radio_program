@@ -288,8 +288,9 @@ class PostController extends Controller
         $this->generateOpinionJson($opinionID);
         $this->generateCarteleraJson($carteleraID); 
         $this->generateNotasXPrograma(); 
+        $ultimaNota = $this->getUltimaNota($excludeCategories);
+        $this->generateUltimaNota($ultimaNota,$excludeCategories);
         $notasxbloque   = $this->getNotasxBloque();
-        $ultimaNota     = $this->getUltimaNota($excludeCategories);
 
         $postsBlock = 1;
         $postCount = 1;
@@ -320,7 +321,6 @@ class PostController extends Controller
                 Array(
                     'settings'          => $this->getSettings(),
                     'micrositios'       => $this->getMicroSites(),
-                    'ultimanota'        => $ultimaNota,
                     $postxblock,
                     'bannertop'         => $this->getBannerTop(),
                     'notasbloqueleidas'    => $this->getNotasBloqueLeidas(),
@@ -558,6 +558,13 @@ class PostController extends Controller
                 ->getResult();
         
         return $posts;
+    }
+    
+    private function generateUltimaNota($lastPost){ 
+        
+        $json = json_encode( array( 'ultimanota' => $lastPost ) );
+        $fs   = new \Symfony\Component\Filesystem\Filesystem();
+        $fs->dumpFile(__DIR__."/../../../../web/uploads/json/ultimanota.json", $json);
     }
     
     private function getAllPostsJson($excludeCategories, $offset = 1, $limit = null){ 
