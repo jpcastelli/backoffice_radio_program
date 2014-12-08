@@ -581,8 +581,9 @@ class PostController extends Controller
         $em   = $this->getDoctrine()->getManager();
         $posts  = $em
                 ->createQueryBuilder()
-                ->select('q.id,q.pretitle, q.title, q.shortDescription, q.description, q.cover, q.status, q.createD, q.comments')
+                ->select('u.id as user_id, q.id,q.pretitle, q.title, q.shortDescription, q.description, q.cover, q.status, q.createD, q.comments')
                 ->from('VorterixBackendBundle:Post', 'q')
+                ->innerJoin('VorterixBackendBundle:User', 'u', Join::WITH, 'q.user = u.id')
                 ->where('q.category = :id')
                 ->setParameter('id', $category)
                  ->orderBy('q.createD', 'DESC')
