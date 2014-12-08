@@ -289,7 +289,7 @@ class PostController extends Controller
         $this->generateCarteleraJson($carteleraID); 
         $this->generateNotasXPrograma(); 
         $notasxbloque   = $this->getNotasxBloque();
-        $ultimaNota     = $this->getUltimaNota();
+        $ultimaNota     = $this->getUltimaNota($excludeCategories);
 
         $postsBlock = 1;
         $postCount = 1;
@@ -320,7 +320,7 @@ class PostController extends Controller
                 Array(
                     'settings'          => $this->getSettings(),
                     'micrositios'       => $this->getMicroSites(),
-                    'ultimanota'        => $this->getUltimaNota(),
+                    'ultimanota'        => $ultimaNota,
                     $postxblock,
                     'bannertop'         => $this->getBannerTop(),
                     'notasbloqueleidas'    => $this->getNotasBloqueLeidas(),
@@ -470,24 +470,6 @@ class PostController extends Controller
         return;
     }
     
-    private function getUltimaNota(){ 
-        
-         $em   = $this->getDoctrine()->getManager();
-        $posts  = $em
-                ->createQueryBuilder()
-                ->select('c.name as programa, q.id,q.pretitle, q.title, q.shortDescription, q.description, q.cover, q.status, q.createD, q.comments')
-                ->from('VorterixBackendBundle:Post', 'q')
-                ->innerJoin('VorterixBackendBundle:Category', 'c', Join::WITH, 'q.category = c.id')
-                ->orderBy('q.createD', 'DESC')
-                ->where('q.status=true' )
-                ->setFirstResult( 1 )
-                ->setMaxResults( 1 )
-                ->getQuery()
-                ->getResult();
-        
-        return $posts;
-    }
-    
     private function getNumeroColumnasDestacado(){
         $em   = $this->getDoctrine()->getManager();
         $key  = $em->getRepository("VorterixBackendBundle:Settings")->findBy(array("keySetting" => "DESTACADO_COLUMNAS"));
@@ -555,6 +537,27 @@ class PostController extends Controller
         $notasxbloque[6] = 7;
         
         return $notasxbloque;
+    }
+    
+    private function getUltimaNota($excludeCategories){ 
+        
+        $excluded = implode(',', $excludeCategories);
+        
+         $em   = $this->getDoctrine()->getManager();
+        $posts  = $em
+                ->createQueryBuilder()
+                ->select('c.name as programa, q.id,q.pretitle, q.title, q.shortDescription, q.description, q.cover, q.status, q.createD, q.comments')
+                ->from('VorterixBackendBundle:Post', 'q')
+                ->innerJoin('VorterixBackendBundle:Category', 'c', Join::WITH, 'q.category = c.id')
+                ->orderBy('q.createD', 'DESC')
+                ->where('q.status=true' )
+                ->where("q.category not in ($excluded)")
+                ->setFirstResult( 0 )
+                ->setMaxResults( 1 )
+                ->getQuery()
+                ->getResult();
+        
+        return $posts;
     }
     
     private function getAllPostsJson($excludeCategories, $offset = 1, $limit = null){ 
