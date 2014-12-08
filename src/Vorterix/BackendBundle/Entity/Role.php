@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="role")
+ * @ORM\Table(name="Role")
  * @ORM\Entity()
  */
 class Role implements RoleInterface

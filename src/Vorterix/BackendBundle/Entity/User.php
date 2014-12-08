@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * Acme\UserBundle\Entity\User
  *
- * @ORM\Table(name="users")
+ * @ORM\Table(name="User")
  * @ORM\Entity(repositoryClass="Vorterix\BackendBundle\Entity\UserRepository")
  */
 class User implements UserInterface, \Serializable
