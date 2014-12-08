@@ -211,7 +211,7 @@ class HighlightController extends Controller
     
     private function generateHighlightJson(){
         $highlights = $this->getAllHighlightsJson();
-        $json = json_encode( array( 'destacados' => $highlights ) );
+        $json = json_encode( array( 'destacados' => $highlights, 'numColumnasDestacado' => $this->getNumeroColumnasDestacado() ) );
         $fs   = new \Symfony\Component\Filesystem\Filesystem();
         $fs->dumpFile(__DIR__."/../../../../web/uploads/json/destacados.json", $json);
     }
@@ -234,6 +234,13 @@ class HighlightController extends Controller
             $counter++;
         }
         return $arrHighlights;
+    }
+    
+    private function getNumeroColumnasDestacado(){
+        $em   = $this->getDoctrine()->getManager();
+        $key  = $em->getRepository("VorterixBackendBundle:Settings")->findBy(array("keySetting" => "DESTACADO_COLUMNAS"));
+ 
+        return $key[0]->getValueSetting();
     }
 
 }
