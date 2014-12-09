@@ -395,13 +395,13 @@
                         <div class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </div>
-                        <input type="text" class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask name="publish-date"/>
+                        <input type="text" class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" value="{{ "now"|date("d/m/Y") }}" data-mask name="publish-date"/>
                     </div><!-- /.input group -->
                 </div><!-- /.form group -->
                 <div class="bootstrap-timepicker">
                     <div class="form-group">
                         <div class="input-group">
-                            <input type="text" class="form-control timepicker" name="publish-time"/>
+                            <input type="text" class="form-control timepicker" value="{{ "now"|date("H:i A") }}" name="publish-time"/>
                             <div class="input-group-addon">
                                 <i class="fa fa-clock-o"></i>
                             </div>
