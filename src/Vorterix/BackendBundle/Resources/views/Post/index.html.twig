@@ -25,11 +25,14 @@ function getCookie(cname) {
     return "";
 }
     
-    $('#list-table').dataTable();
+    var table = $('#list-table').dataTable();
+    table.fnSort( [ [0,'desc'] ] );
+    
     
     $('#list-table_length select').change(function(){
        
             setCookie('postsRecordsPage', $(this).val(), 365);
+            table._fnCreateCookie();
     });
     
     if(getCookie('postsRecordsPage'))
@@ -55,7 +58,7 @@ function getCookie(cname) {
                     </div>
                 </div>
             </div><!-- /.box-header -->
-            <div class="box-body table-responsive no-padding table-responsive">
+            <div class="box-body table-responsive">
                 <table id="list-table" class="table table-bordered table-striped">
                     <thead>
                     <tr>
