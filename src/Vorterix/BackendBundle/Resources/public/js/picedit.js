@@ -389,9 +389,9 @@
 			this._cropping.cropbox.addClass("active");
 			this._hideAllNav();
                         var cropWidth = $('.picedit_drag_resize_box').width();
-                        var height = cropWidth*9/16;
+                        var height = cropWidth*5/16;
                         $('.picedit_drag_resize_box').height(height+'px');
-                        console.log(cropWidth+' - '+height);
+
 		},
 		crop_close: function () {
 			this._cropping.cropbox.removeClass("active");
