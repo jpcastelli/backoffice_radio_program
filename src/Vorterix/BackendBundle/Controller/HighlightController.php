@@ -202,6 +202,8 @@ class HighlightController extends Controller
                 $key->setValueSetting($columns);
             }
         }
+        
+        $this->generateHighlightJson();
  
         $em->persist($key);
         $em->flush();
