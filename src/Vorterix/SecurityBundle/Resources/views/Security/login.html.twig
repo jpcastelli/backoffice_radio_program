@@ -5,7 +5,7 @@
     {% if error %}
     <div>{{ error.message }}</div>
 {% endif %}
-    <div class="header">Sign In</div>
+<div class="header"><img src="{{ asset('bundles/vorterixbackend/images/logo.png') }}" /><br />Sign In</div>
     <form action="{{ path('VorterixSecurityBundle_login_check') }}" id="login-box" method="post">
         <div class="body bg-gray">
             <div class="form-group">
