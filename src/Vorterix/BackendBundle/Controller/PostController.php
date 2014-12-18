@@ -532,7 +532,7 @@ class PostController extends Controller
         $notasxbloque[1] = 3;
         $notasxbloque[2] = 3;
         $notasxbloque[3] = 4;
-        $notasxbloque[4] = 7;
+        $notasxbloque[4] = 11;
         $notasxbloque[5] = 4;
         $notasxbloque[6] = 7;
         
