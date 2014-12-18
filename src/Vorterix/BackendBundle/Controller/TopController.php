@@ -73,7 +73,19 @@ class TopController extends Controller
         }
         
         $top->setTitle($title);
-        $this->saveTopImages($top, $topTitles, $topDescriptions, $topOrders, $topImages, $topImagesID);
+        $arrTops = Array();
+        $counter = 0;
+        
+        foreach($topTitles as $title){
+            $arrTops[$counter]['id']          = (! empty($topImagesID[$counter])) ? $topImagesID[$counter] : '';
+            $arrTops[$counter]['title']       = $title;
+            $arrTops[$counter]['description'] = $topDescriptions[$counter];
+            $arrTops[$counter]['order']       = $topOrders[$counter];
+            $arrTops[$counter]['cover']       = $topImages[$counter];
+            $counter++;
+        }
+        
+        $this->saveTopImages($top, $arrTops);
         
         $em->persist($top);
         $em->flush();
@@ -82,31 +94,29 @@ class TopController extends Controller
         return $this->redirect($this->generateUrl('VorterixBackendBundle_top', array()));
     }
     
-    private function saveTopImages($top, $topTitles, $topDescriptions, $topOrders, $topImages, $topImagesID){
+    private function saveTopImages($top, $topElems){
         
         $em = $this->getDoctrine()->getManager();
         
-        if(count($topImages) > 0 && count($topImages) > count($topImagesID)){
-            $counter = 0;
-            foreach($topImages as $imageName){
-                if(!count($topImagesID) || !array_key_exists($counter, $topImagesID)){
-                    if(file_exists(__DIR__.'/../../../../web/uploads/temp/'.$imageName)){
-                        $file = new \Symfony\Component\HttpFoundation\File\File(__DIR__.'/../../../../web/uploads/temp/'.$imageName);           
-                        $file->move($this->getPath('top'), $imageName);
-
-                        $image = new TopImage();          
-                        $image->setName($imageName);
-                        $image->setTitle($topTitles[$counter]);
-                        $image->setDescription($topDescriptions[$counter]);
-                        $image->setTopOrder((int)$topOrders[$counter]);
-                        $image->setTop($top);
-                        $top->addTopImage($image);
-                    }
-                }
-                $counter++;
+        foreach($topElems as $topElem){
+            $topImage  = (! empty($topElem['id'])) ? $em->getRepository('VorterixBackendBundle:TopImage')->find($topElem['id']) : new TopImage();
+            $imageName = $topElem['cover'];
+            
+            if(file_exists(__DIR__.'/../../../../web/uploads/temp/'.$imageName)){
+                $file = new \Symfony\Component\HttpFoundation\File\File(__DIR__.'/../../../../web/uploads/temp/'.$imageName);           
+                $file->move($this->getPath('top'), $imageName);
             }
-            $em->persist($image);
+            
+            $topImage->setTitle($topElem['title']);
+            $topImage->setDescription($topElem['description']);
+            $topImage->setTopOrder($topElem['order']);
+            $topImage->setName($topElem['cover']);
+            $topImage->setTop($top);
+            $top->addTopImage($topImage);
         }
+        
+        $em->persist($topImage);
+        return;
     }
 
     private function getAll(){
