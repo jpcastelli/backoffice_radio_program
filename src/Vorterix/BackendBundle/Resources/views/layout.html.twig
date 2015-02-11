@@ -124,6 +124,12 @@
                                 <span>Streaming</span>                             
                             </a>
                         </li>
+                        <li class="treeview">
+                            <a href="{{ path('VorterixBackendBundle_highlight') }}">
+                                <i class="fa fa-fw fa-bolt"></i>
+                                <span>Destacados</span>                             
+                            </a>
+                        </li>
                         {% if is_granted('ROLE_ADMIN') %}
                         <li class="treeview">
                             <a href="{{ path('VorterixBackendBundle_Json') }}">
